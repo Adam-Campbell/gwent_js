@@ -27,7 +27,7 @@ const cardData = [
         baseScore: 15,
         type: 'infantry',
         isHero: true,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'geralt.jpg'
     },
     {
@@ -35,7 +35,7 @@ const cardData = [
         baseScore: 15,
         type: 'infantry',
         isHero: true,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'ciri.jpg'
     },
     {
@@ -43,7 +43,7 @@ const cardData = [
         baseScore: 7,
         type: 'ranged',
         isHero: true,
-        behaviours: ['heal'],
+        ability: cardAbilities.heal,
         image: 'yennefer.jpg'
     },
     {
@@ -51,7 +51,7 @@ const cardData = [
         baseScore: 2,
         type: 'infantry',
         isHero: false,
-        behaviours: ['commanders horn'],
+        ability: cardAbilities.commandersHorn,
         image: 'dandelion.jpg'
     },
     {
@@ -59,7 +59,7 @@ const cardData = [
         baseScore: 4,
         type: 'infantry',
         isHero: false,
-        behaviours: ['spy'],
+        ability: cardAbilities.spy,
         image: 'dijkstra.jpg'
     },
     {
@@ -67,7 +67,7 @@ const cardData = [
         baseScore: 7,
         type: 'infantry',
         isHero: false,
-        behaviours: ['scorch'],
+        ability: cardAbilities.scorch,
         image: 'villentretenmerth.jpg'
     },
     {
@@ -75,7 +75,8 @@ const cardData = [
         baseScore: 4,
         type: 'infantry',
         isHero: false,
-        behaviours: ['tight bond'],
+        ability: cardAbilities.tightBond,
+        bondGroup: bondGroups.northernRealms.blueStripe,
         image: 'blue_stripes_commando.jpg'
     },
     {
@@ -83,7 +84,8 @@ const cardData = [
         baseScore: 4,
         type: 'infantry',
         isHero: false,
-        behaviours: ['tight bond'],
+        ability: cardAbilities.tightBond,
+        bondGroup: bondGroups.northernRealms.blueStripe,
         image: 'blue_stripes_commando.jpg'
     },
     {
@@ -91,7 +93,8 @@ const cardData = [
         baseScore: 5,
         type: 'ranged',
         isHero: false,
-        behaviours: ['tight bond'],
+        ability: cardAbilities.tightBond,
+        bondGroup: bondGroups.northernRealms.crinfridReaver,
         image: 'crinfrid_reaver.jpg'
     },
     {
@@ -99,7 +102,8 @@ const cardData = [
         baseScore: 5,
         type: 'ranged',
         isHero: false,
-        behaviours: ['tight bond'],
+        ability: cardAbilities.tightBond,
+        bondGroup: bondGroups.northernRealms.crinfridReaver,
         image: 'crinfrid_reaver.jpg'
     },
     {
@@ -107,7 +111,7 @@ const cardData = [
         baseScore: 6,
         type: 'siege',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'trebuchet.jpg'
     },
     {
@@ -115,7 +119,7 @@ const cardData = [
         baseScore: 1,
         type: 'siege',
         isHero: false,
-        behaviours: ['morale boost'],
+        ability: cardAbilities.moraleBoost,
         image: 'kaedweni_siege_expert_1.jpg'
     },
     {
@@ -123,7 +127,7 @@ const cardData = [
         baseScore: 6,
         type: 'ranged',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'dethmold.jpg'
     },
     {
@@ -131,7 +135,7 @@ const cardData = [
         baseScore: 5,
         type: 'infantry',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'siegfried.jpg'
     },
     {
@@ -139,7 +143,7 @@ const cardData = [
         baseScore: 2,
         type: 'infantry',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'yarpen_zigrin.jpg'
     },
     {
@@ -147,7 +151,7 @@ const cardData = [
         baseScore: 4,
         type: 'ranged',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'sabrina.jpg'
     },
     {
@@ -155,7 +159,7 @@ const cardData = [
         baseScore: 5,
         type: 'ranged',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'sile.jpg'
     },
     {
@@ -163,7 +167,7 @@ const cardData = [
         baseScore: 7,
         type: 'infantry',
         isHero: true,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'triss.jpg'
     },
     {
@@ -171,7 +175,7 @@ const cardData = [
         baseScore: 6,
         type: 'siege',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'trebuchet_alt.jpg'
     },
     {
@@ -179,7 +183,7 @@ const cardData = [
         baseScore: 5,
         type: 'siege',
         isHero: false,
-        behaviours: ['heal'],
+        ability: cardAbilities.heal,
         image: 'dun_banner_medic.jpg'
     },
     {
@@ -187,7 +191,7 @@ const cardData = [
         baseScore: 6,
         type: 'siege',
         isHero: false,
-        behaviours: [],
+        ability: cardAbilities.standard,
         image: 'ballista.jpg'
     },
     {
@@ -195,7 +199,8 @@ const cardData = [
         baseScore: 8,
         type: 'siege',
         isHero: false,
-        behaviours: ['tight bond'],
+        ability: cardAbilities.tightBond,
+        bondGroup: bondGroups.northernRealms.catapult,
         image: 'catapult.jpg'
     },
     {
@@ -203,7 +208,8 @@ const cardData = [
         baseScore: 8,
         type: 'siege',
         isHero: false,
-        behaviours: ['tight bond'],
+        ability: cardAbilities.tightBond,
+        bondGroup: bondGroups.northernRealms.catapult,
         image: 'catapult.jpg'
     }
 ];

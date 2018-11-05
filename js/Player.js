@@ -6,7 +6,7 @@ class Player {
         this.roundsWon = 0;
         this.continueRound = true;
         this.deck = this.createDeck();
-        this._hand = this.createHand();
+        this.hand = this.createHand();
         this.graveyard = [];
         this.active = active;
         this._cardToPlay = null;
@@ -16,19 +16,126 @@ class Player {
     * Creates a deck of Card objects from the raw card data
     * @return  {array}   An array of Card objects
     */
+    // createDeck() {
+    //     //const player = this;
+    //     return cardData.map(function(card, index) {
+    //         return new Card(
+    //             card.name,
+    //             index,
+    //             card.baseScore,
+    //             card.type,
+    //             card.isHero,
+    //             card.image,
+    //             card.behaviours,
+    //             null
+    //         );
+    //     });
+    // }
     createDeck() {
-        //const player = this;
+        const playerId = this.id;
         return cardData.map(function(card, index) {
-            return new Card(
-                card.name,
-                index,
-                card.baseScore,
-                card.type,
-                card.isHero,
-                card.image,
-                card.behaviours,
-                null
-            );
+            
+            switch (card.ability) {
+                case cardAbilities.standard:
+                    return new Card(
+                        card.name, 
+                        index, 
+                        card.baseScore, 
+                        card.type, 
+                        card.isHero, 
+                        card.image, 
+                        playerId
+                    );
+
+                case cardAbilities.scorch:
+                    return new ScorchCard(
+                        card.name,
+                        index,
+                        card.baseScore,
+                        card.type,
+                        card.isHero,
+                        card.image,
+                        playerId
+                    );
+
+                case cardAbilities.summon:
+                    return new SummonCard(
+                        card.name,
+                        index,
+                        card.baseScore,
+                        card.type,
+                        card.isHero,
+                        card.image,
+                        playerId
+                    );
+
+                case cardAbilities.spy:
+                    return new SpyCard(
+                        card.name,
+                        index,
+                        card.baseScore,
+                        card.type,
+                        card.isHero,
+                        card.image,
+                        playerId
+                    );
+
+                case cardAbilities.heal:
+                    return new HealCard(
+                        card.name,
+                        index,
+                        card.baseScore,
+                        card.type,
+                        card.isHero,
+                        card.image,
+                        playerId  
+                    );
+
+                case cardAbilities.tightBond:
+                    return new TightBondCard(
+                        card.name,
+                        index,
+                        card.baseScore,
+                        card.type,
+                        card.isHero,
+                        card.image,
+                        playerId,
+                        card.bondGroup 
+                    );
+
+                case cardAbilities.moraleBoost:
+                    return new MoraleBoostCard(
+                        card.name,
+                        index,
+                        card.baseScore,
+                        card.type,
+                        card.isHero,
+                        card.image,
+                        playerId 
+                    );
+
+                case cardAbilities.commandersHorn:
+                    return new CommandersHornCard(
+                        card.name,
+                        index,
+                        card.baseScore,
+                        card.type,
+                        card.isHero,
+                        card.image,
+                        playerId 
+                    );
+
+                default:
+                    return new Card(
+                        card.name, 
+                        index, 
+                        card.baseScore, 
+                        card.type, 
+                        card.isHero, 
+                        card.image, 
+                        playerId
+                    ); 
+            }
         });
     }
 
@@ -71,9 +178,9 @@ class Player {
     * Get the cards in players hand that haven't been played yet
     * @return  {Array} Array of card objects     
     */
-    get hand() {
-        return this._hand.filter(card => !card.inPlay);
-    }
+    // get hand() {
+    //     return this._hand.filter(card => !card.inPlay);
+    // }
 
     /** 
     * Update the score for each individual row for this player and aggregate the results
@@ -115,17 +222,16 @@ class Player {
     * No parameters or return value    
     */
     preRoundCleanUp() {
-        const toGraveyard = this._hand.filter(card => card.inPlay);
-        const toHand = this._hand.filter(card => !card.inPlay);
-        this.graveyard = [...this.graveyard, ...toGraveyard];
-        this._hand = [...toHand];
+        // const toGraveyard = this._hand.filter(card => card.inPlay);
+        // const toHand = this._hand.filter(card => !card.inPlay);
+        // this.graveyard = [...this.graveyard, ...toGraveyard];
+        // this._hand = [...toHand];
+
         this.currentScore = 0;
         this.continueRound = true;
         const playersRows = game.board.getPlayersRows(this);
-        //console.log(playersRows);
         for (let row of playersRows) {
-            row.units = [];
-            row.score = 0;
+            row.reset();
         }
         game.board.renderPlayersRows(this);
     }
@@ -139,6 +245,11 @@ class Player {
         }
         targetElement.innerHTML = "";
         targetElement.appendChild(frag);
+    }
+
+    removeFromHand(cardObject) {
+        this.hand = this.hand.filter(card => card.id !== cardObject.id);
+        return cardObject;
     }
 }
 

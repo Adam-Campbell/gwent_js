@@ -32,6 +32,10 @@ class Game {
     get activePlayer() {
         return this.players.find(player => player.active);
     }
+
+    get inactivePlayer() {
+        return this.players.find(player => !player.active);
+    }
     
     /** 
     * Contains all the logic for playing a turn.
@@ -61,9 +65,7 @@ class Game {
 
     playTurn() {
         const activePlayer = this.activePlayer;
-        const otherPlayer = this.players.find(function(player) {
-            return player !== activePlayer;
-        });
+        const inactivePlayer = this.inactivePlayer;
         // current player is still playing round
         // if (activePlayer.continueRound) {
         //     console.log('the current player is still playing this round');
@@ -85,28 +87,28 @@ class Game {
         
         // as long as activePlayer is still playing, play their current card
         if (activePlayer.continueRound) {
-            activePlayer.playCurrentCard();
+            //activePlayer.playCurrentCard();
             activePlayer.renderHand();
             this.board.renderPlayersRows(activePlayer);
         }
         // always update both players score on every turn
         activePlayer.updatePlayerScore();
-        otherPlayer.updatePlayerScore();
+        inactivePlayer.updatePlayerScore();
         // if otherPlayer is still playing, switch to them
-        if (otherPlayer.continueRound) {
+        if (inactivePlayer.continueRound) {
             this.switchActivePlayer();
             // for this block to executr both players must have finished so end round
         } else if (!activePlayer.continueRound) {
             // end round logic
             const activePlayerScore = activePlayer.currentScore;
-            const otherPlayerScore = otherPlayer.currentScore;
-            if (activePlayerScore > otherPlayerScore) {
+            const inactivePlayerScore = inactivePlayer.currentScore;
+            if (activePlayerScore > inactivePlayerScore) {
                 activePlayer.roundsWon += 1;
-            } else if (otherPlayerScore > activePlayerScore) {
-                otherPlayer.roundsWon += 1;
+            } else if (inactivePlayerScore > activePlayerScore) {
+                inactivePlayer.roundsWon += 1;
             }
             activePlayer.preRoundCleanUp();
-            otherPlayer.preRoundCleanUp();
+            inactivePlayer.preRoundCleanUp();
         }
     }
 

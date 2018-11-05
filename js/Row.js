@@ -8,10 +8,14 @@ class Row {
 
     /** 
     * Adds a unit to this row 
-    * @param   {Object}    unit to be added to the row .
+    * @param   {Object}    cardObject to be added to the row .
     */
-    addUnit(unit) {
-        this.units.push(unit);
+    addUnit(cardObject) {
+        this.units.push(cardObject);
+    }
+
+    removeUnit(cardObject) {
+        this.units = this.units.filter(unit => unit.id !== cardObject.id);
     }
 
     /** 
@@ -38,5 +42,12 @@ class Row {
         }
         targetElement.innerHTML = "";
         targetElement.appendChild(frag);
+    }
+
+    reset() {
+        this.owner.graveyard = [...this.owner.graveyard, ...this.units];
+        this.units = [];
+        this.score = 0;
+        this.render();
     }
 }
