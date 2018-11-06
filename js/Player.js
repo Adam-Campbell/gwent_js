@@ -153,6 +153,21 @@ class Player {
         return hand;
     }
 
+    drawFromDeck(amountToDraw) {
+        for (let i = 0; i < amountToDraw; i++) {
+            const cardToDraw = Math.floor(Math.random() * this.deck.length);
+            const drawnCard = this.deck.splice(cardToDraw, 1)[0];
+            this.hand.push(drawnCard);
+        }
+        this.renderHand();
+    }
+
+    playFromGraveyard() {
+        if (!this.graveyard.length) return;
+        const randomNum = Math.floor(Math.random() * this.graveyard.length);
+        this.graveyard[randomNum].playCard();
+    }
+
     /** 
     * Get the card that has been set as the next to be played.
     * @return  {object} Card object     
@@ -251,6 +266,7 @@ class Player {
         this.hand = this.hand.filter(card => card.id !== cardObject.id);
         return cardObject;
     }
+
 }
 
 

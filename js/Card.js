@@ -32,7 +32,7 @@ class Card {
         playerObject.graveyard.push(this);
     }
 
-    render() {
+    render(inPlay=false) {
         // not the actual rendering logic, just a simple test.
         const imageElement = document.createElement('img');
         const imageContainer = document.createElement('div');
@@ -46,7 +46,7 @@ class Card {
             // the card clicked belonged to activePlayer
             if (e.ctrlKey) {
                 this.renderModal();
-            } else {
+            } else if (!inPlay && game.activePlayer.id === this.ownerId) {
                 //game.activePlayer.cardToPlay = this.id;
                 //game.playTurn();
                 this.playCard();
@@ -158,21 +158,19 @@ class SpyCard extends Card {
     */
     playCard() {
         const activePlayer = game.activePlayer;
+        const inactivePlayer = game.inactivePlayer;
         // remove this card from the players hand
         activePlayer.removeFromHand(this);
-        // add it to the relevant row on the board
-        const activePlayersRows = game.board.getPlayersRows(activePlayer);
-        const rowForCard = activePlayersRows.filter(row => row.type === this.type)[0];
+        // add it to the relevant row on the inactive players side of the board
+        const inactivePlayersRows = game.board.getPlayersRows(inactivePlayer);
+        const rowForCard = inactivePlayersRows.find(row => row.type === this.type);
         rowForCard.addUnit(this);
-        
-        game.playTurn();
-
-        // the above is only temporary - I have just given the spy card the normal card
-        // behaviour for now, but will need to modify it to have the spy card behaviour. 
-
-        // add it to the relevant row on inactivePlayers side of board
-        // draw two cards from activePlayers deck and place into the hand
+        // draw two cards from activePlayers deck and place into their hand
+        activePlayer.drawFromDeck(2);
         // call the main game.playTurn method
+        game.playTurn();
+       
+        
     }
 }
 
@@ -198,7 +196,7 @@ class HealCard extends Card {
 
         // if the activePlayer has cards in their graveyard, let the activePlayer
         // pick one of them to play onto the board
-
+        activePlayer.playFromGraveyard();
         // call the main game.playTurn method
         game.playTurn();
     }

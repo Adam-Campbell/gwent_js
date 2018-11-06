@@ -90,6 +90,7 @@ class Game {
             //activePlayer.playCurrentCard();
             activePlayer.renderHand();
             this.board.renderPlayersRows(activePlayer);
+            this.board.renderPlayersRows(inactivePlayer);
         }
         // always update both players score on every turn
         activePlayer.updatePlayerScore();

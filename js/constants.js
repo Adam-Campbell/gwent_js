@@ -22,3 +22,8 @@ const bondGroups = {
         catapult: 'catapult'
     }
 }
+
+const rowStatusEffects = {
+    commandersHorn: 'commanders horn',
+    weather: 'weather' 
+};
