@@ -163,10 +163,21 @@ class Player {
     }
 
     playFromGraveyard() {
-        if (!this.graveyard.length) return;
-        const randomNum = Math.floor(Math.random() * this.graveyard.length);
-        this.graveyard[randomNum].playCard();
+        const revivableCards = this.graveyard.filter(card => !card.isHero);
+        if (revivableCards.length === 0) {
+            game.playTurn();
+            return;
+        };
+        const randomIndex = Math.floor(Math.random() * revivableCards.length);
+        const cardToRevive = revivableCards[randomIndex];
+        //this.graveyard[randomNum].playCard();
+        const indexInGraveyard = this.graveyard.findIndex(card => {
+            return card.id === cardToRevive.id && card.ownerId === cardToRevive.ownerId;
+        });
+        this.graveyard.splice(indexInGraveyard, 1);
+        cardToRevive.playCard();
     }
+
 
     /** 
     * Get the card that has been set as the next to be played.
@@ -265,6 +276,24 @@ class Player {
     removeFromHand(cardObject) {
         this.hand = this.hand.filter(card => card.id !== cardObject.id);
         return cardObject;
+    }
+
+    renderInfoPanel() {
+        // grab the info panel for this player
+        const targetInfoPanel = document.querySelector(`.player-info[data-player-id="${this.id}"]`);
+        // set rounds won to this.roundsWon
+        targetInfoPanel.querySelector('.player-info__rounds-won').textContent = `${this.roundsWon} rounds won`;
+        // set # cards in hand to this.hand.length
+        targetInfoPanel.querySelector('.player-info__hand').textContent = `${this.hand.length} cards in hand`;
+        // set current score to this.currentScore
+        targetInfoPanel.querySelector('.player-info__current-score').textContent = `Current Score: ${this.currentScore}`;
+        // adjust the now playing status
+        const playingStatus = targetInfoPanel.querySelector('.player-info__playing-status');
+        if (game.activePlayer.id === this.id) {
+            playingStatus.textContent = 'Now playing...';
+        } else {
+            playingStatus.textContent = '';
+        }
     }
 
 }

@@ -24,31 +24,35 @@ class Row {
     * Computes the score for a particular row
     * @return  {number}   score for the row
     */
+    // calculateScore() {
+    //     // This is just a simple implementation and will need to change once the more complex
+    //     // card behaviours are introduced.
+    //     const computedScore = this.units.reduce(function(acc, curr, index) {
+    //         return acc + curr.baseScore;
+    //     }, 0);
+    //     //return computedScore;
+    //     this.score = computedScore;
+
+    //     // more advanced implementation
+    // }
     calculateScore() {
-        // This is just a simple implementation and will need to change once the more complex
-        // card behaviours are introduced.
-        const computedScore = this.units.reduce(function(acc, curr, index) {
-            return acc + curr.baseScore;
-        }, 0);
-        //return computedScore;
-        this.score = computedScore;
-
-        // more advanced implementation
-
-
-
+        this.ooComputeScore();
+        this.setScore();
     }
 
     render() {
-        const targetElement = document.querySelector(`.row[data-player-id="${this.owner.id}"][data-unit-type="${this.type}"]`);
+        const targetRow = document.querySelector(`.row[data-player-id="${this.owner.id}"][data-unit-type="${this.type}"]`);
+        const cardContainer = targetRow.querySelector('.row__inner');
+        const rowScore = targetRow.querySelector('.row__score-text'); 
         const frag = document.createDocumentFragment();
         if (this.units.length) {
             for (let card of this.units) {
                 frag.appendChild(card.render(true));
             }
         }
-        targetElement.innerHTML = "";
-        targetElement.appendChild(frag);
+        cardContainer.innerHTML = "";
+        cardContainer.appendChild(frag);
+        rowScore.textContent = this.score;
     }
 
     reset() {
@@ -112,6 +116,93 @@ class Row {
         }
 
         return rTot + hTot;
+    }
 
+    ooComputeScore() {
+        const regCards = this.units.filter(card => !card.isHero);
+        if (regCards.length === 0) return;
+        // to begin with reset everything back to the base score
+        for (let card of regCards) {
+            card.currentScore = card.baseScore;
+        }
+        // first deal with weather effects
+        if (this.weatherEffect) {
+            for (let card of regCards) {
+                card.currentScore = 1;
+            }
+        }
+
+        // then we deal with tight bond cards
+        const bondGroups = {};
+        const bondCards = regCards.filter(card => card instanceof TightBondCard);
+        if (bondCards.length) {
+            // first determine which tight bond groups are present, and how many units from
+            // each group are present. 
+            for (let card of bondCards) {
+                if (!bondGroups[card.bondGroup]) {
+                    bondGroups[card.bondGroup] = 1;
+                } else {
+                    bondGroups[card.bondGroup] += 1;
+                }
+            }
+            // now we go over all of them again and apply the appropriate modifiers, with
+            // full knowledge of how many units from each bondGroup are present.
+            for (let card of bondCards) {
+                card.currentScore = card.baseScore * bondGroups[card.bondGroup];
+            }
+        }
+        
+
+        // then we deal with row-level commanders horns
+        if (this.commandersHorn) {
+            for (let card of regCards) {
+                card.currentScore *= 2;
+            }
+            // if and only if commanders horn not present on row, deal with any cards that 
+            // have the commanders horn ability.
+        } else {
+            const commandersHornCards = regCards.filter(card => card instanceof CommandersHornCard);
+            // if there is one commanders horn card, double the currentScore of every non hero card
+            // on the row except for the commanders horn card itself. 
+            if (commandersHornCards.length === 1) {
+
+                for (let card of regCards) {
+                    if (!(card instanceof CommandersHornCard)) {
+                        card.currentScore *= 2;
+                    }
+                }
+                // if there are multiple commanders horn cards on the row, then double the currentScore
+                // of every non hero card on the row including the commanders horn cards.
+            } else if (commandersHornCards.length > 1) {
+                for (let card of regCards) {
+                    card.currentScore *= 2;
+                }
+            }
+
+            // then we deal with morale boost cards
+            const moraleBoostCards = regCards.filter(card => card instanceof MoraleBoostCard);
+            // if exactly one morale boost card is present, add 1 to the currentScore of every
+            // non hero card on row besides the morale boost card itslf. 
+            if (moraleBoostCards.length === 1) {
+                for (let card of regCards) {
+                    if (!(card instanceof MoraleBoostCard)) {
+                        card.currentScore += 1;
+                    }
+                }
+                // if there are multiple morale boost cards in the row, then just add 1 to the
+                // current score of every non hero card on row
+            } else if (moraleBoostCards.length > 1) {
+                for (let card of regCards) {
+                    card.currentScore += 1;
+                }
+            }
+        }
+    }
+
+    setScore() {
+        const newScore = this.units.reduce((acc, nextCard, index) => {
+            return acc + nextCard.currentScore;
+        }, 0);
+        this.score = newScore;
     }
 }

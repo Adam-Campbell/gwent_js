@@ -10,6 +10,7 @@ class Card {
         // circular reference. 
         this.ownerId = ownerId;
         this.ability = cardAbilities.standard;
+        this._currentScore = baseScore;
     }
 
     /** 
@@ -29,7 +30,22 @@ class Card {
     }
 
     killCard(playerObject) {
+        this.resetScore();
         playerObject.graveyard.push(this);
+    }
+
+    get currentScore() {
+        return this._currentScore;
+    }
+
+    set currentScore(newScore) {
+        if (!this.isHero) {
+            this._currentScore = newScore;
+        }
+    }
+
+    resetScore() {
+        this.currentScore = this.baseScore;
     }
 
     render(inPlay=false) {
@@ -198,7 +214,7 @@ class HealCard extends Card {
         // pick one of them to play onto the board
         activePlayer.playFromGraveyard();
         // call the main game.playTurn method
-        game.playTurn();
+        //game.playTurn();
     }
 }
 

@@ -19,9 +19,14 @@
     min-height: 100vh;
     width: 250px;
     margin-right: 16px;
-    background-color: rgba(17,17,17,0.9);
+    background-color: rgba(8,8,8,1);
+    background-image: url('../images/grunge-texture.jpg');
+    background-blend-mode: overlay;
     padding-top: 32px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .board {
@@ -38,31 +43,55 @@
     margin-top: 8px;
     margin-bottom: 8px;
     display: flex;
+    flex-basis: 80px; 
+}
+
+.row__inner {
+    display: flex;
     justify-content: center;
     align-items: center;
-    flex-basis: 80px;
+    flex-grow: 1;
+    border-radius: 3px;
+}
+
+.row__score-container {
+    background-color: rgba(221,221,221,0.25);
+    border-radius: 3px;
+    margin-left: 16px;
+    width: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.row__score-text {
+    font-family: sans-serif;
+    color: #222;
+    font-weight: 700;
+    font-size: 24px;
 }
 
 .row--siege {
-    background-color: rgba(146,50,50,0.4);
+    background-color: rgba(146,50,50,0.25);
 }
 
 .row--ranged {
-    background-color: rgba(72,72,152,0.4);
+    background-color: rgba(72,72,152,0.25);
 }
 
 .row--infantry {
-    background-color: rgba(207,207,98,0.4);
+    background-color: rgba(207,207,98,0.25);
 }
 
 .card-dock {
-    background-color: rgba(221,221,221,0.4);
+    background-color: rgba(221,221,221,0.25);
     height: 130px;
     padding-left: 4px;
     padding-right: 4px; 
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 3px;
 }
 
 .card {
@@ -137,8 +166,68 @@
     margin-top: 8px;
     cursor: pointer;
     transition: background-color ease 0.4s;
+    display: none;
 }
 
 .end-round-button:hover {
     background-color: #620303;
+}
+
+.player-info {
+    padding: 16px;
+    margin: 16px;
+    border: solid papayawhip 2px;
+    border-radius: 3px;
+}
+
+.player-info__name {
+    font-family: sans-serif;
+    color: papayawhip;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.player-info__rounds-won {
+    font-family: sans-serif;
+    color: papayawhip;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.player-info__hand {
+    font-family: sans-serif;
+    color: papayawhip;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.player-info__current-score {
+    font-family: sans-serif;
+    color: papayawhip;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.player-info__end-round {
+    background-color: #8c0707;
+    border: none;
+    border-radius: 3px;
+    font-family: sans-serif;
+    font-weight: 400;
+    color: papayawhip;
+    padding: 8px 16px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: background-color ease 0.4s;
+}
+
+.player-info__end-round:hover {
+    background-color: #620303;
+}
+
+.player-info__playing-status {
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #34ac34;
 }

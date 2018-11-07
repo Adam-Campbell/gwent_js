@@ -16,6 +16,22 @@
        <div class="info-panel">
             <button class="end-round-button" data-player-id="0">Player One End Round</button>
             <button class="end-round-button" data-player-id="1">Player Two End Round</button>
+            <div class="player-info" data-player-id="0">
+                <p class="player-info__name">Player One</p>
+                <p class="player-info__rounds-won">0 rounds won</p>
+                <p class="player-info__hand">10 cards in hand</p>
+                <p class="player-info__current-score">Current score: 0</p>
+                <button class="player-info__end-round">End round</button>
+                <p class="player-info__playing-status"></p>
+            </div>
+            <div class="player-info" data-player-id="1">
+                    <p class="player-info__name">Player Two</p>
+                    <p class="player-info__rounds-won">0 rounds won</p>
+                    <p class="player-info__hand">10 cards in hand</p>
+                    <p class="player-info__current-score">Current score: 0</p>
+                    <button class="player-info__end-round">End round</button>
+                    <p class="player-info__playing-status"></p>
+                </div>
        </div>
        <div class="board">
            <div class="card-dock" data-player-id="0">
@@ -28,14 +44,44 @@
                 <div class="card">
                     <img class="card-image "src="images/blue_stripes_commando.jpg"/>
                 </div> -->
-           </div>
-           <div class="row row--siege" data-player-id="0" data-unit-type="siege"></div>
-           <div class="row row--ranged" data-player-id="0" data-unit-type="ranged"></div>
-           <div class="row row--infantry" data-player-id="0" data-unit-type="infantry"></div>
-           <div class="row row--infantry" data-player-id="1" data-unit-type="infantry"></div>
-           <div class="row row--ranged" data-player-id="1" data-unit-type="ranged"></div>
-           <div class="row row--siege" data-player-id="1" data-unit-type="siege"></div>
-           <div class="card-dock" data-player-id="1">
+            </div>
+            <div class="row" data-player-id="0" data-unit-type="siege">
+                <div class="row__inner row--siege"></div>
+                <div class="row__score-container">
+                    <p class="row__score-text"></p>
+                </div>
+            </div>          
+            <div class="row" data-player-id="0" data-unit-type="ranged">
+                <div class="row__inner row--ranged"></div>
+                <div class="row__score-container">
+                    <p class="row__score-text"></p>
+                </div>
+            </div>
+            <div class="row" data-player-id="0" data-unit-type="infantry">
+                <div class="row__inner row--infantry"></div>
+                <div class="row__score-container">
+                    <p class="row__score-text"></p>
+                </div>
+            </div>
+            <div class="row" data-player-id="1" data-unit-type="infantry">
+                <div class="row__inner row--infantry"></div>
+                <div class="row__score-container">
+                    <p class="row__score-text"></p>
+                </div>
+            </div>
+            <div class="row" data-player-id="1" data-unit-type="ranged">
+                <div class="row__inner row--ranged"></div>
+                <div class="row__score-container">
+                    <p class="row__score-text"></p>
+                </div>
+            </div>
+            <div class="row" data-player-id="1" data-unit-type="siege">
+                <div class="row__inner row--siege"></div>
+                <div class="row__score-container">
+                    <p class="row__score-text"></p>
+                </div>
+            </div>
+            <div class="card-dock" data-player-id="1">
                <!-- <div class="card">
                    <img class="card-image "src="images/geralt.jpg"/>
                </div>
