@@ -27,10 +27,15 @@ class Board {
         return this.rows.filter(row => row.owner.id === playerObject.id);
     }
 
+    /** 
+    * Renders the rows for a particular player
+    * @param   {Object}    playerObject to render the rows for
+    */
     renderPlayersRows(playerObject) {
         const playersRows = this.getPlayersRows(playerObject);
         for (let row of playersRows) {
             row.render();
         }
     }
+    
 }

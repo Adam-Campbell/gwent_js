@@ -9,28 +9,13 @@ class Player {
         this.hand = this.createHand();
         this.graveyard = [];
         this.active = active;
-        this._cardToPlay = null;
     }
 
     /** 
-    * Creates a deck of Card objects from the raw card data
+    * Factory function for the Card class and the various sub classes. Uses the raw card
+    * data to determine arguments to pass in.
     * @return  {array}   An array of Card objects
     */
-    // createDeck() {
-    //     //const player = this;
-    //     return cardData.map(function(card, index) {
-    //         return new Card(
-    //             card.name,
-    //             index,
-    //             card.baseScore,
-    //             card.type,
-    //             card.isHero,
-    //             card.image,
-    //             card.behaviours,
-    //             null
-    //         );
-    //     });
-    // }
     createDeck() {
         const playerId = this.id;
         return cardData.map(function(card, index) {
@@ -153,6 +138,11 @@ class Player {
         return hand;
     }
 
+    /** 
+    * Draws a specified amount of random cards from the deck and places them into
+    * the players hand.
+    * @param   {num}    amountToDraw - the amount of random cards to draw
+    */
     drawFromDeck(amountToDraw) {
         for (let i = 0; i < amountToDraw; i++) {
             const cardToDraw = Math.floor(Math.random() * this.deck.length);
@@ -162,51 +152,28 @@ class Player {
         this.renderHand();
     }
 
+    /** 
+    * Picks a random revivable card from the players graveyard and plays it onto the board. 
+    */
     playFromGraveyard() {
+        // filter out hero cards which can't be revived
         const revivableCards = this.graveyard.filter(card => !card.isHero);
+        // just play turn if no revivable cards
         if (revivableCards.length === 0) {
             game.playTurn();
             return;
         };
+        // select a random card from the pool of elligible cards
         const randomIndex = Math.floor(Math.random() * revivableCards.length);
         const cardToRevive = revivableCards[randomIndex];
-        //this.graveyard[randomNum].playCard();
+        // locate that card within the original unfiltered graveyard and remove it
         const indexInGraveyard = this.graveyard.findIndex(card => {
             return card.id === cardToRevive.id && card.ownerId === cardToRevive.ownerId;
         });
         this.graveyard.splice(indexInGraveyard, 1);
+        // play the card onto the board
         cardToRevive.playCard();
     }
-
-
-    /** 
-    * Get the card that has been set as the next to be played.
-    * @return  {object} Card object     
-    */
-    get cardToPlay() {
-        return this._cardToPlay;
-    }
-
-    /** 
-    * Set the next card to be played
-    * @param   {Object}    Card object to be played
-    */
-    set cardToPlay(cardId) {
-        if (cardId === null) {
-            this._cardToPlay = null;
-        } else {
-            const card = this.hand.find(card => card.id === cardId);
-            this._cardToPlay = card;
-        }
-    }
-
-    /** 
-    * Get the cards in players hand that haven't been played yet
-    * @return  {Array} Array of card objects     
-    */
-    // get hand() {
-    //     return this._hand.filter(card => !card.inPlay);
-    // }
 
     /** 
     * Update the score for each individual row for this player and aggregate the results
@@ -221,18 +188,6 @@ class Player {
             return acc + curr.score;
         }, 0);
         this.currentScore = playersScore;
-    }
-
-    /** 
-    * Play the current card
-    * No parameters or return value    
-    */
-    playCurrentCard() {
-        this.cardToPlay.playCard();
-        const playersRows = game.board.getPlayersRows(this);
-        const rowToPlayTo = playersRows.find(row => row.type === this.cardToPlay.type);
-        rowToPlayTo.addUnit(this.cardToPlay);
-        this.cardToPlay = null;
     }
 
     /** 
@@ -262,6 +217,9 @@ class Player {
         game.board.renderPlayersRows(this);
     }
 
+    /** 
+    * Render the card dock containing the players current hand 
+    */
     renderHand() {
         const targetElement = document.querySelector(`.card-dock[data-player-id="${this.id}"]`);
         const frag = document.createDocumentFragment();
@@ -273,11 +231,17 @@ class Player {
         targetElement.appendChild(frag);
     }
 
+    /** 
+    * Removes a card from the players hand. 
+    */
     removeFromHand(cardObject) {
         this.hand = this.hand.filter(card => card.id !== cardObject.id);
         return cardObject;
     }
 
+    /** 
+    * Render the info panel for this player
+    */
     renderInfoPanel() {
         // grab the info panel for this player
         const targetInfoPanel = document.querySelector(`.player-info[data-player-id="${this.id}"]`);

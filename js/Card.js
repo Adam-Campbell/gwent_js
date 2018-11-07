@@ -29,25 +29,46 @@ class Card {
         game.playTurn();
     }
 
+    /** 
+    * Adds this card to the players graveyard and resets the cards currentScore to its baseScore
+    * @param   {Object}    playerObject - the player whose graveyard card should be added to.
+    */
     killCard(playerObject) {
         this.resetScore();
         playerObject.graveyard.push(this);
     }
 
+    /** 
+    * Getter method for this cards currentScore
+    */
     get currentScore() {
         return this._currentScore;
     }
 
+    /** 
+    * Setter method for this cards currentScore
+    * @param   {number}    newScore - the newScore to set for this card.
+    */
     set currentScore(newScore) {
         if (!this.isHero) {
             this._currentScore = newScore;
         }
     }
 
+    /** 
+    * Reset the card by setting its currentScore back to its baseScore. Used when taking a card
+    * off of it's current row, moving it to the graveyard or players hand etc.
+    * @param   {Object}    cardObject to be removed from the row.
+    */
     resetScore() {
         this.currentScore = this.baseScore;
     }
 
+    /** 
+    * Constructrs the HTML representation of this card
+    * @param   {boolean}    inPlay - true if card is on a row, false if in hand, graveyard etc.
+    * @returns {HTMLElement} a document fragment containing the HTML representation of the card.
+    */
     render(inPlay=false) {
         // not the actual rendering logic, just a simple test.
         const imageElement = document.createElement('img');
@@ -71,6 +92,9 @@ class Card {
         return imageContainer;
     }
 
+    /** 
+    * Renders a larger image of the card as an overlay/modal.
+    */
     renderModal() {
         document.querySelector('.jumbo-card__image').src = `images/${this.image}`;
         document.querySelector('.modal__overlay').classList.add('modal__overlay--show');
