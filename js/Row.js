@@ -112,13 +112,13 @@ class Row {
             // if and only if commanders horn not present on row, deal with any cards that 
             // have the commanders horn ability.
         } else {
-            const commandersHornCards = regCards.filter(card => card instanceof CommandersHornCard);
+            const commandersHornCards = regCards.filter(card => card instanceof CommandersHornUnitCard);
             // if there is one commanders horn card, double the currentScore of every non hero card
             // on the row except for the commanders horn card itself. 
             if (commandersHornCards.length === 1) {
 
                 for (let card of regCards) {
-                    if (!(card instanceof CommandersHornCard)) {
+                    if (!(card instanceof CommandersHornUnitCard)) {
                         card.currentScore *= 2;
                     }
                 }

@@ -103,7 +103,7 @@ class Card {
 
 
 
-class ScorchCard extends Card {
+class ScorchUnitCard extends Card {
     constructor(name, id, baseScore, type, isHero, image, ownerId) {
         super(name, id, baseScore, type, isHero, image, ownerId);
         this.ability = cardAbilities.scorch;
@@ -262,7 +262,7 @@ class MoraleBoostCard extends Card {
 }
 
 
-class CommandersHornCard extends Card {
+class CommandersHornUnitCard extends Card {
     constructor(name, id, baseScore, type, isHero, image, ownerId) {
         super(name, id, baseScore, type, isHero, image, ownerId);
         this.ability = cardAbilities.commandersHorn;
@@ -270,3 +270,8 @@ class CommandersHornCard extends Card {
 
 }
 
+class WeatherCard {
+    constructor(name, id, type, image, ownerId) {
+
+    }
+}

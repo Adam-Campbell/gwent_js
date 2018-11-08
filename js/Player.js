@@ -32,8 +32,8 @@ class Player {
                         playerId
                     );
 
-                case cardAbilities.scorch:
-                    return new ScorchCard(
+                case cardAbilities.scorchUnit:
+                    return new ScorchUnitCard(
                         card.name,
                         index,
                         card.baseScore,
@@ -99,8 +99,8 @@ class Player {
                         playerId 
                     );
 
-                case cardAbilities.commandersHorn:
-                    return new CommandersHornCard(
+                case cardAbilities.commandersHornUnit:
+                    return new CommandersHornUnitCard(
                         card.name,
                         index,
                         card.baseScore,

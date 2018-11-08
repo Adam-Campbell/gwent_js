@@ -51,7 +51,7 @@ const cardData = [
         baseScore: 2,
         type: 'infantry',
         isHero: false,
-        ability: cardAbilities.commandersHorn,
+        ability: cardAbilities.commandersHornUnit,
         image: 'dandelion.jpg'
     },
     {
@@ -67,7 +67,7 @@ const cardData = [
         baseScore: 7,
         type: 'infantry',
         isHero: false,
-        ability: cardAbilities.scorch,
+        ability: cardAbilities.scorchUnit,
         image: 'villentretenmerth.jpg'
     },
     {
