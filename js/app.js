@@ -18,7 +18,7 @@ console.log('it works!');
 const game = new Game();
 game.init();
 
-document.querySelector('.modal__button').addEventListener('click', function() {
-    document.querySelector('.modal__overlay').classList.remove('modal__overlay--show');
-    document.querySelector('.jumbo-card__image').src = "";
-});
+// document.querySelector('.modal__button').addEventListener('click', function() {
+//     document.querySelector('.modal__overlay').classList.remove('modal__overlay--show');
+//     document.querySelector('.jumbo-card__image').src = "";
+// });

@@ -19,6 +19,25 @@ card schema:
 */
 
 
+/*
+the schema for each card will have to be updated to have a cardType property, with the following
+possible values:
+
+unit card
+scorch unit card
+summon unit card
+spy unit card
+heal unit card
+tight bond unit card
+morale boost unit card
+commanders horn unit card
+weather card
+clear weather card
+scorch card
+decoy card
+commanders horn card
+
+*/
 
 
 const cardData = [
@@ -28,7 +47,8 @@ const cardData = [
         type: 'infantry',
         isHero: true,
         ability: cardAbilities.standard,
-        image: 'geralt.jpg'
+        image: 'geralt.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'ciri',
@@ -36,7 +56,8 @@ const cardData = [
         type: 'infantry',
         isHero: true,
         ability: cardAbilities.standard,
-        image: 'ciri.jpg'
+        image: 'ciri.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'yennefer',
@@ -44,7 +65,8 @@ const cardData = [
         type: 'ranged',
         isHero: true,
         ability: cardAbilities.heal,
-        image: 'yennefer.jpg'
+        image: 'yennefer.jpg',
+        cardType: cardTypes.healUnitCard
     },
     {
         name: 'dandelion',
@@ -52,7 +74,8 @@ const cardData = [
         type: 'infantry',
         isHero: false,
         ability: cardAbilities.commandersHornUnit,
-        image: 'dandelion.jpg'
+        image: 'dandelion.jpg',
+        cardType: cardTypes.commandersHornUnitCard
     },
     {
         name: 'dijkstra',
@@ -60,7 +83,8 @@ const cardData = [
         type: 'infantry',
         isHero: false,
         ability: cardAbilities.spy,
-        image: 'dijkstra.jpg'
+        image: 'dijkstra.jpg',
+        cardType: cardTypes.spyUnitCard
     },
     {
         name: 'villentretenmerth',
@@ -68,7 +92,8 @@ const cardData = [
         type: 'infantry',
         isHero: false,
         ability: cardAbilities.scorchUnit,
-        image: 'villentretenmerth.jpg'
+        image: 'villentretenmerth.jpg',
+        cardType: cardTypes.scorchUnitCard
     },
     {
         name: 'blue stripes commando',
@@ -77,7 +102,8 @@ const cardData = [
         isHero: false,
         ability: cardAbilities.tightBond,
         bondGroup: bondGroups.northernRealms.blueStripe,
-        image: 'blue_stripes_commando.jpg'
+        image: 'blue_stripes_commando.jpg',
+        cardType: cardTypes.tightBondUnitCard
     },
     {
         name: 'blue stripes commando',
@@ -86,7 +112,8 @@ const cardData = [
         isHero: false,
         ability: cardAbilities.tightBond,
         bondGroup: bondGroups.northernRealms.blueStripe,
-        image: 'blue_stripes_commando.jpg'
+        image: 'blue_stripes_commando.jpg',
+        cardType: cardTypes.tightBondUnitCard
     },
     {
         name: 'crinfrid reaver',
@@ -95,7 +122,8 @@ const cardData = [
         isHero: false,
         ability: cardAbilities.tightBond,
         bondGroup: bondGroups.northernRealms.crinfridReaver,
-        image: 'crinfrid_reaver.jpg'
+        image: 'crinfrid_reaver.jpg',
+        cardType: cardTypes.tightBondUnitCard
     },
     {
         name: 'crinfrid reaver',
@@ -104,7 +132,8 @@ const cardData = [
         isHero: false,
         ability: cardAbilities.tightBond,
         bondGroup: bondGroups.northernRealms.crinfridReaver,
-        image: 'crinfrid_reaver.jpg'
+        image: 'crinfrid_reaver.jpg',
+        cardType: cardTypes.tightBondUnitCard
     },
     {
         name: 'trebuchet',
@@ -112,7 +141,8 @@ const cardData = [
         type: 'siege',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'trebuchet.jpg'
+        image: 'trebuchet.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'kaedweni siege expert',
@@ -120,7 +150,8 @@ const cardData = [
         type: 'siege',
         isHero: false,
         ability: cardAbilities.moraleBoost,
-        image: 'kaedweni_siege_expert_1.jpg'
+        image: 'kaedweni_siege_expert_1.jpg',
+        cardType: cardTypes.moraleBoostUnitCard
     },
     {
         name: 'dethmold',
@@ -128,7 +159,8 @@ const cardData = [
         type: 'ranged',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'dethmold.jpg'
+        image: 'dethmold.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'siegfried',
@@ -136,7 +168,8 @@ const cardData = [
         type: 'infantry',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'siegfried.jpg'
+        image: 'siegfried.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'yarpen zigrin',
@@ -144,7 +177,8 @@ const cardData = [
         type: 'infantry',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'yarpen_zigrin.jpg'
+        image: 'yarpen_zigrin.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'sabrina',
@@ -152,7 +186,8 @@ const cardData = [
         type: 'ranged',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'sabrina.jpg'
+        image: 'sabrina.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'sile',
@@ -160,7 +195,8 @@ const cardData = [
         type: 'ranged',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'sile.jpg'
+        image: 'sile.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'triss',
@@ -168,7 +204,8 @@ const cardData = [
         type: 'infantry',
         isHero: true,
         ability: cardAbilities.standard,
-        image: 'triss.jpg'
+        image: 'triss.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'trebuchet',
@@ -176,7 +213,8 @@ const cardData = [
         type: 'siege',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'trebuchet_alt.jpg'
+        image: 'trebuchet_alt.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'dun banner medic',
@@ -184,7 +222,8 @@ const cardData = [
         type: 'siege',
         isHero: false,
         ability: cardAbilities.heal,
-        image: 'dun_banner_medic.jpg'
+        image: 'dun_banner_medic.jpg',
+        cardType: cardTypes.healUnitCard
     },
     {
         name: 'ballista',
@@ -192,7 +231,8 @@ const cardData = [
         type: 'siege',
         isHero: false,
         ability: cardAbilities.standard,
-        image: 'ballista.jpg'
+        image: 'ballista.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'catapult',
@@ -201,7 +241,8 @@ const cardData = [
         isHero: false,
         ability: cardAbilities.tightBond,
         bondGroup: bondGroups.northernRealms.catapult,
-        image: 'catapult.jpg'
+        image: 'catapult.jpg',
+        cardType: cardTypes.unitCard
     },
     {
         name: 'catapult',
@@ -210,6 +251,45 @@ const cardData = [
         isHero: false,
         ability: cardAbilities.tightBond,
         bondGroup: bondGroups.northernRealms.catapult,
-        image: 'catapult.jpg'
+        image: 'catapult.jpg',
+        cardType: cardTypes.unitCard
+    },
+    {
+        name: 'decoy',
+        image: 'decoy.jpg',
+        cardType: cardTypes.decoyCard
+    },
+    {
+        name: 'commanders horn',
+        image: 'commanders_horn.jpg',
+        cardType: cardTypes.commandersHornCard
+    },
+    {
+        name: 'scorch',
+        image: 'scorch.jpg',
+        cardType: cardTypes.scorchCard
+    },
+    {
+        name: 'biting frost',
+        image: 'biting_frost.jpg',
+        type: 'infantry',
+        cardType: cardTypes.weatherCard
+    },
+    {
+        name: 'impenetrable fog',
+        image: 'impenetrable_fog.jpg',
+        type: 'ranged',
+        cardType: cardTypes.weatherCard
+    },
+    {
+        name: 'torrential rain',
+        image: 'torrential_rain.jpg',
+        type: 'siege',
+        cardType: cardTypes.weatherCard
+    },
+    {
+        name: 'clear weather',
+        image: 'clear_weather.jpg',
+        cardType: cardTypes.clearWeatherCard
     }
 ];

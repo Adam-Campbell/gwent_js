@@ -7,13 +7,22 @@ const cardAbilities = {
     tightBond: 'tight bond',
     heal: 'heal',
     moraleBoost: 'morale boost',
-    bitingFrost: 'biting frost',
-    torrentialRain: 'torrential rain',
-    impenetrableFog: 'impenetrable fog',
-    clearWeather: 'clear weather',
-    scorch: 'scorch',
-    commandersHorn: 'commandersHorn',
-    decoy: 'decoy'
+};
+
+const cardTypes = {
+    unitCard: 'unit card',
+    scorchUnitCard: 'scorch unit card',
+    summonUnitCard: 'summon unit card',
+    spyUnitCard: 'spy unit card',
+    healUnitCard: 'heal unit card',
+    tightBondUnitCard: 'tight bond unit card',
+    moraleBoostUnitCard: 'morale boost unit card',
+    commandersHornUnitCard: 'commanders horn unit card',
+    weatherCard: 'weather card',
+    clearWeatherCard: 'clear weather card',
+    scorchCard: 'scorch card',
+    decoyCard: 'decoy card',
+    commandersHornCard: 'commanders horn card'
 };
 
 const unitTypes = {

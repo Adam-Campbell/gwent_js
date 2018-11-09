@@ -70,7 +70,7 @@ class Row {
     * current state of the row. All logic involved in score modifiers etc is in this method.
     */
     computeScore() {
-        const regCards = this.units.filter(card => !card.isHero);
+        const regCards = this.units.filter(card => card instanceof UnitCard && !card.isHero);
         if (regCards.length === 0) return;
         // to begin with reset everything back to the base score
         for (let card of regCards) {
@@ -85,7 +85,7 @@ class Row {
 
         // then we deal with tight bond cards
         const bondGroups = {};
-        const bondCards = regCards.filter(card => card instanceof TightBondCard);
+        const bondCards = regCards.filter(card => card instanceof TightBondUnitCard);
         if (bondCards.length) {
             // first determine which tight bond groups are present, and how many units from
             // each group are present. 
@@ -99,7 +99,7 @@ class Row {
             // now we go over all of them again and apply the appropriate modifiers, with
             // full knowledge of how many units from each bondGroup are present.
             for (let card of bondCards) {
-                card.currentScore = card.baseScore * bondGroups[card.bondGroup];
+                card.currentScore = card.currentScore * bondGroups[card.bondGroup];
             }
         }
         
@@ -131,12 +131,12 @@ class Row {
             }
 
             // then we deal with morale boost cards
-            const moraleBoostCards = regCards.filter(card => card instanceof MoraleBoostCard);
+            const moraleBoostCards = regCards.filter(card => card instanceof MoraleBoostUnitCard);
             // if exactly one morale boost card is present, add 1 to the currentScore of every
             // non hero card on row besides the morale boost card itslf. 
             if (moraleBoostCards.length === 1) {
                 for (let card of regCards) {
-                    if (!(card instanceof MoraleBoostCard)) {
+                    if (!(card instanceof MoraleBoostUnitCard)) {
                         card.currentScore += 1;
                     }
                 }
@@ -155,7 +155,8 @@ class Row {
     * score property to that value.
     */
     setScore() {
-        const newScore = this.units.reduce((acc, nextCard, index) => {
+        const onlyUnitCards = this.units.filter(card => card instanceof UnitCard);
+        const newScore = onlyUnitCards.reduce((acc, nextCard, index) => {
             return acc + nextCard.currentScore;
         }, 0);
         this.score = newScore;

@@ -16,7 +16,7 @@ class Player {
     * data to determine arguments to pass in.
     * @return  {array}   An array of Card objects
     */
-    createDeck() {
+    oldcreateDeck() {
         const playerId = this.id;
         return cardData.map(function(card, index) {
             
@@ -120,6 +120,154 @@ class Player {
                         card.image, 
                         playerId
                     ); 
+            }
+        });
+    }
+
+    createDeck() {
+        const playerId = this.id;
+        return cardData.map(function(card, index) {
+            let id = generateId(12); 
+            
+            switch(card.cardType) {
+                
+                case cardTypes.unitCard:
+                    return new UnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero
+                    );
+
+                case cardTypes.scorchUnitCard:
+                    return new ScorchUnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero
+                    );
+
+                case cardTypes.summonUnitCard:
+                    return new SummonUnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero
+                    );
+
+                case cardTypes.spyUnitCard:
+                    return new SpyUnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero
+                    );
+
+                case cardTypes.healUnitCard:
+                    return new HealUnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero
+                    );
+
+                case cardTypes.tightBondUnitCard:
+                    return new TightBondUnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero,
+                        card.bondGroup
+                    );
+
+                case cardTypes.moraleBoostUnitCard:
+                    return new MoraleBoostUnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero
+                    );
+
+                case cardTypes.commandersHornUnitCard:
+                    return new CommandersHornUnitCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type,
+                        card.baseScore,
+                        card.isHero
+                    );
+
+                case cardTypes.weatherCard:
+                    return new WeatherCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId,
+                        card.type
+                    );
+
+                case cardTypes.clearWeatherCard:
+                    return new ClearWeatherCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId
+                    );
+
+                case cardTypes.scorchCard:
+                    return new ScorchCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId
+                    );
+
+                case cardTypes.decoyCard:
+                    return new DecoyCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId
+                    );
+
+                case cardTypes.commandersHornCard:
+                    return new CommandersHornCard(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId
+                    );
+
+                default:
+                    return new Card(
+                        card.name,
+                        id,
+                        card.image,
+                        playerId
+                    );
             }
         });
     }
@@ -263,3 +411,11 @@ class Player {
 }
 
 
+
+function generateId(length) {
+    let str = '';
+    for (let i = 0; i < length; i++) {
+        str += Math.floor(Math.random() * 10).toString();
+    }
+    return str;
+} 

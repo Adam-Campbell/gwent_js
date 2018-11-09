@@ -41,6 +41,10 @@ class Game {
         return this.players.find(player => !player.active);
     }
 
+    getPlayerById(id) {
+        return this.players.find(player => player.id === id);
+    }
+
     /** 
     * Contains all the logic for playing a turn
     */
