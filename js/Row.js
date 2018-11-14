@@ -6,6 +6,56 @@ class Row {
         this.score = 0;
         this.weatherEffect = false;
         this.commandersHorn = false;
+        this._prevState = {
+            units: [],
+            weatherEffect: false,
+            commandersHorn: false
+        };
+    }
+
+    _getCurrentState() {
+        return {
+            units: this.units.map(card => card.id),
+            weatherEffect: this.weatherEffect,
+            commandersHorn: this.commandersHorn
+        };
+    }
+
+    _determineIfStateChanged() {
+        const currentState = this._getCurrentState();
+        const prevState = this._prevState;
+        let hasChanged = false;
+        // first compare whether prevState and curentState have different amounts of units, or 
+        // different effects statuses. If yes to any of those set hasChanged to true.
+        if (
+            prevState.units.length !== currentState.units.length ||
+            prevState.weatherEffect !== currentState.weatherEffect ||
+            prevState.commandersHorn !== currentState.commandersHorn
+        ) {
+            hasChanged = true;
+        } else {
+            // if the first test is passed, now go through the units arrays for prevState and 
+            // currentState and compare each individual id.
+            for (let i = 0; i < prevState.units.length; i ++) {
+                if (prevState.units[i] !== currentState.units[i]) {
+                    hasChanged = true;
+                }
+            }
+        }
+
+        // if hasChanged is true, update _prevState with currentState, and return true, else return false.
+        if (hasChanged) {
+            this._prevState = currentState;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    render() {
+        if (this._determineIfStateChanged()) {
+            this._render();
+        }
     }
 
     /** 
@@ -27,7 +77,7 @@ class Row {
     /** 
     * Render this particular row.
     */
-    render() {
+    _render() {
         const targetRow = document.querySelector(`.row[data-player-id="${this.owner.id}"][data-unit-type="${this.type}"]`);
         const cardContainer = targetRow.querySelector('.row__inner');
         const rowScore = targetRow.querySelector('.row__score-text'); 
@@ -40,6 +90,7 @@ class Row {
         cardContainer.innerHTML = "";
         cardContainer.appendChild(frag);
         rowScore.textContent = this.score;
+        console.log(`The ${this.type} row for ${this.owner.name} has re-rendered!`);
     }
 
     /** 

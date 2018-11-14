@@ -1,309 +1,3 @@
-
-// class oldCard {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId) {
-//         this.name = name;
-//         this.id = id;
-//         this.baseScore = baseScore;
-//         this.type = type;
-//         this.isHero = isHero;
-//         this.image = image;
-//         // note - owners id used instead of the actual owner object in order to avoid 
-//         // circular reference. 
-//         this.ownerId = ownerId;
-//         this.ability = cardAbilities.standard;
-//         this._currentScore = baseScore;
-//     }
-
-//     /** 
-//     * Puts this card into play on the board.
-//     * No return value
-//     */
-//     playCard() {
-//         const activePlayer = game.activePlayer;
-//         // remove this card from the players hand
-//         activePlayer.removeFromHand(this);
-//         // add it to the relevant row on the board
-//         const activePlayersRows = game.board.getPlayersRows(activePlayer);
-//         const rowForCard = activePlayersRows.filter(row => row.type === this.type)[0];
-//         rowForCard.addUnit(this);
-//         // call the main game.playTurn method
-//         game.playTurn();
-//     }
-
-//     /** 
-//     * Adds this card to the players graveyard and resets the cards currentScore to its baseScore
-//     * @param   {Object}    playerObject - the player whose graveyard card should be added to.
-//     */
-//     killCard(playerObject) {
-//         this.resetScore();
-//         playerObject.graveyard.push(this);
-//     }
-
-//     /** 
-//     * Getter method for this cards currentScore
-//     */
-//     get currentScore() {
-//         return this._currentScore;
-//     }
-
-//     /** 
-//     * Setter method for this cards currentScore
-//     * @param   {number}    newScore - the newScore to set for this card.
-//     */
-//     set currentScore(newScore) {
-//         if (!this.isHero) {
-//             this._currentScore = newScore;
-//         }
-//     }
-
-//     /** 
-//     * Reset the card by setting its currentScore back to its baseScore. Used when taking a card
-//     * off of it's current row, moving it to the graveyard or players hand etc.
-//     * @param   {Object}    cardObject to be removed from the row.
-//     */
-//     resetScore() {
-//         this.currentScore = this.baseScore;
-//     }
-
-//     /** 
-//     * Constructrs the HTML representation of this card
-//     * @param   {boolean}    inPlay - true if card is on a row, false if in hand, graveyard etc.
-//     * @returns {HTMLElement} a document fragment containing the HTML representation of the card.
-//     */
-//     render(inPlay=false) {
-//         // not the actual rendering logic, just a simple test.
-//         const imageElement = document.createElement('img');
-//         const imageContainer = document.createElement('div');
-//         imageElement.classList.add('card-image');
-//         imageElement.src = `images/${this.image}`;
-//         imageContainer.classList.add('card');
-//         imageContainer.appendChild(imageElement);
-//         //document.querySelector('.card-dock').appendChild(imageContainer);
-//         imageContainer.addEventListener('click', (e) => {
-//             // todo: need to ensure before trying to play a card that I ensure that
-//             // the card clicked belonged to activePlayer
-//             if (e.ctrlKey) {
-//                 this.renderModal();
-//             } else if (!inPlay && game.activePlayer.id === this.ownerId) {
-//                 //game.activePlayer.cardToPlay = this.id;
-//                 //game.playTurn();
-//                 this.playCard();
-//             }
-//         });
-//         return imageContainer;
-//     }
-
-//     /** 
-//     * Renders a larger image of the card as an overlay/modal.
-//     */
-//     renderModal() {
-//         document.querySelector('.jumbo-card__image').src = `images/${this.image}`;
-//         document.querySelector('.modal__overlay').classList.add('modal__overlay--show');
-//     }
-// }
-
-
-
-// class oldScorchUnitCard extends Card {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId) {
-//         super(name, id, baseScore, type, isHero, image, ownerId);
-//         this.ability = cardAbilities.scorch;
-//     }
-
-//     /** 
-//     * All of the base playCard logic, plus the scorch functionality.
-//     * No return value
-//     */
-//     playCard() {
-//         const activePlayer = game.activePlayer;
-//         const inactivePlayer = game.inactivePlayer;
-//         // remove this card from the players hand
-//         activePlayer.removeFromHand(this);
-//         // add it to the relevant row on the board
-//         const activePlayersRows = game.board.getPlayersRows(activePlayer);
-//         const rowForCard = activePlayersRows.filter(row => row.type === this.type)[0];
-//         rowForCard.addUnit(this);
-
-//         // if inactivePlayers infantry row has a score >= 10, the find the strongest
-//         // non-hero card(s), remove them from the row and place them into 
-//         const rowToScorch = game.board.getPlayersRows(inactivePlayer)
-//                                       .find(row => row.type === unitTypes.infantry);
-//         if (rowToScorch.score >= 10) {
-//             //const cardsToScorch = this.determineCardsToScorch(rowToScorch);
-//             this.determineCardsToScorch(rowToScorch).forEach(card => {
-//                 rowToScorch.removeUnit(card);
-//                 card.killCard(inactivePlayer);
-//             });
-//         }
-
-//         // call the main game.playTurn method
-//         game.playTurn();
-//     }
-
-//     /** 
-//     * Given a row, it finds the non-hero card(s) with the highest score
-//     * and returns the cardObjects for those cards. 
-//     * @return {Array}  An array of 0 or more cardObjects
-//     */
-//     determineCardsToScorch(row) {
-//         const heroesFilteredOut = row.units.filter(card => card.isHero === false);
-//         let highestScore = 0;
-//         for (let card of heroesFilteredOut) {
-//             if (card.baseScore > highestScore) {
-//                 highestScore = card.baseScore;
-//             }
-//         } 
-//         const cardsToScorch = heroesFilteredOut.filter(card => card.baseScore === highestScore);
-//         return cardsToScorch;
-//     }
-// }
-
-
-// class oldSummonCard extends Card {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId) {
-//         super(name, id, baseScore, type, isHero, image, ownerId);
-//         this.ability = cardAbilities.summon;
-//     }
-
-//     /** 
-//     * All of the base playCard logic, plus the summon functionality.
-//     * No return value
-//     */
-//     playCard() {
-//         const activePlayer = game.activePlayer;
-//         // remove this card from the players hand
-//         activePlayer.removeFromHand(this);
-//         // add it to the relevant row on the board
-//         const activePlayersRows = game.board.getPlayersRows(activePlayer);
-//         const rowForCard = activePlayersRows.filter(row => row.type === this.type)[0];
-//         rowForCard.addUnit(this);
-
-//         // search activePlayers deck and hand for all corresponding summon cards
-//         // add all of these cards to the board as well
-
-//         // call the main game.playTurn method
-//         game.playTurn();
-//     }
-// }
-
-
-// class oldSpyCard extends Card {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId) {
-//         super(name, id, baseScore, type, isHero, image, ownerId);
-//         this.ability = cardAbilities.spy;
-//     }
-
-//     /** 
-//     * All of the base playCard logic, plus the spy functionality.
-//     * No return value
-//     */
-//     playCard() {
-//         const activePlayer = game.activePlayer;
-//         const inactivePlayer = game.inactivePlayer;
-//         // remove this card from the players hand
-//         activePlayer.removeFromHand(this);
-//         // add it to the relevant row on the inactive players side of the board
-//         const inactivePlayersRows = game.board.getPlayersRows(inactivePlayer);
-//         const rowForCard = inactivePlayersRows.find(row => row.type === this.type);
-//         rowForCard.addUnit(this);
-//         // draw two cards from activePlayers deck and place into their hand
-//         activePlayer.drawFromDeck(2);
-//         // call the main game.playTurn method
-//         game.playTurn();
-       
-        
-//     }
-// }
-
-
-// class oldHealCard extends Card {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId) {
-//         super(name, id, baseScore, type, isHero, image, ownerId);
-//         this.ability = cardAbilities.heal;
-//     }
-
-//     /** 
-//     * All of the base playCard logic, plus the heal functionality.
-//     * No return value
-//     */
-//     playCard() {
-//         const activePlayer = game.activePlayer;
-//         // remove this card from the players hand
-//         activePlayer.removeFromHand(this);
-//         // add it to the relevant row on the board
-//         const activePlayersRows = game.board.getPlayersRows(activePlayer);
-//         const rowForCard = activePlayersRows.filter(row => row.type === this.type)[0];
-//         rowForCard.addUnit(this);
-
-//         // if the activePlayer has cards in their graveyard, let the activePlayer
-//         // pick one of them to play onto the board
-//         activePlayer.playFromGraveyard();
-//         // call the main game.playTurn method
-//         //game.playTurn();
-//     }
-// }
-
-
-// class oldTightBondCard extends Card {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId, bondGroup) {
-//         super(name, id, baseScore, type, isHero, image, ownerId);
-//         this.ability = cardAbilities.tightBond;
-//         this.bondGroup = bondGroup;
-//     }
-
-// }
-
-
-// class oldMoraleBoostCard extends Card {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId) {
-//         super(name, id, baseScore, type, isHero, image, ownerId);
-//         this.ability = cardAbilities.moraleBoost;
-//     }
-
-// }
-
-
-// class oldCommandersHornUnitCard extends Card {
-//     constructor(name, id, baseScore, type, isHero, image, ownerId) {
-//         super(name, id, baseScore, type, isHero, image, ownerId);
-//         this.ability = cardAbilities.commandersHorn;
-//     }
-
-// }
-
-// class oldWeatherCard {
-//     constructor(name, id, type, image, ownerId) {
-        
-//     }
-// }
-
-
-/*
-
-Card hierarchy:
-
-Card
-    UnitCard
-        ScorchUnitCard
-        SummonUnitCard
-        SpyUnitCard
-        HealUnitCard
-        TightBondUnitCard
-        MoraleBoostUnitCard
-        CommandersHornUnitCard
-    WeatherCard
-    ClearWeatherCard
-    ScorchCard
-    DecoyCard
-    CommandersHornCard
-*/
-
-
-
-
-
-
-
 class Card {
     constructor(name, id, image, ownerId) {
         this.name = name;
@@ -320,7 +14,6 @@ class Card {
     * @returns {HTMLElement} a document fragment containing the HTML representation of the card.
     */
     render(inPlay=false) {
-        // not the actual rendering logic, just a simple test.
         const imageElement = document.createElement('img');
         const imageContainer = document.createElement('div');
         imageElement.classList.add('card-image');
@@ -328,54 +21,35 @@ class Card {
         imageContainer.classList.add('card');
         imageContainer.dataset.cardId = this.id;
         imageContainer.appendChild(imageElement);
-        //document.querySelector('.card-dock').appendChild(imageContainer);
         imageContainer.addEventListener('click', (e) => {
-            // todo: need to ensure before trying to play a card that I ensure that
-            // the card clicked belonged to activePlayer
             if (e.ctrlKey) {
                 this.renderModal();
             } else if (!inPlay && game.activePlayer.id === this.ownerId) {
-                //game.activePlayer.cardToPlay = this.id;
-                //game.playTurn();
                 this.playCard();
             }
         });
         return imageContainer;
     }
 
+    renderCardBack() {
+       const card = document.createElement('div');
+       card.classList.add('card');
+       card.classList.add('show-back');
+       card.dataset.cardId = this.id;
+       return card; 
+    }
+
     /** 
     * Renders a larger image of the card as an overlay/modal.
     */
-    // renderModal() {
-    //     document.querySelector('.jumbo-card__image').src = `images/${this.image}`;
-    //     document.querySelector('.modal__overlay').classList.add('modal__overlay--show');
-    // }
     renderModal() {
-        //document.querySelector('.jumbo-card__image').src = `images/${this.image}`;
-        //document.querySelector('.modal__overlay').classList.add('modal__overlay--show');
-        const docFrag = document.createDocumentFragment();
-        const modalOverlay = document.createElement('div');
-        const modalContentContainer = document.createElement('div');
         const jumboImage = document.createElement('img');
         const imageContainer = document.createElement('div');
-        const modalButton = document.createElement('button');
-        modalOverlay.classList.add('modal__overlay');
-        modalContentContainer.classList.add('modal__content');
         imageContainer.classList.add('jumbo-card__container');
         jumboImage.classList.add('jumbo-card__image');
         jumboImage.src = `images/${this.image}`;
-        modalButton.classList.add('modal__button');
-        modalButton.textContent = 'X';
-        docFrag.appendChild(modalOverlay);
-        modalOverlay.appendChild(modalContentContainer);
-        modalContentContainer.appendChild(imageContainer);
         imageContainer.appendChild(jumboImage);
-        modalOverlay.appendChild(modalButton);
-        modalButton.addEventListener('click', function() {
-            document.body.removeChild(modalOverlay);
-        });
-        
-        document.body.appendChild(docFrag);
+        game.board.renderModal(imageContainer, true);
     }
 }
 
@@ -444,7 +118,7 @@ class UnitCard extends Card {
 class ScorchUnitCard extends UnitCard {
     constructor(name, id, image, ownerId, type, baseScore, isHero) {
         super(name, id, image, ownerId, type, baseScore, isHero);
-        this.ability = cardAbilities.scorchUnit;
+        //this.ability = cardAbilities.scorchUnit;
     }
 
     /** 
@@ -467,7 +141,7 @@ class ScorchUnitCard extends UnitCard {
                                       .find(row => row.type === unitTypes.infantry);
         if (rowToScorch.score >= 10) {
             //const cardsToScorch = this.determineCardsToScorch(rowToScorch);
-            this.determineCardsToScorch(rowToScorch).forEach(card => {
+            this._determineCardsToScorch(rowToScorch).forEach(card => {
                 rowToScorch.removeUnit(card);
                 card.killCard(inactivePlayer);
             });
@@ -482,7 +156,7 @@ class ScorchUnitCard extends UnitCard {
     * and returns the cardObjects for those cards. 
     * @return {Array}  An array of 0 or more cardObjects
     */
-    determineCardsToScorch(row) {
+    _determineCardsToScorch(row) {
         const heroesFilteredOut = row.units.filter(card => card.isHero === false);
         let highestScore = 0;
         for (let card of heroesFilteredOut) {
@@ -499,7 +173,7 @@ class ScorchUnitCard extends UnitCard {
 class SummonUnitCard extends UnitCard {
     constructor(name, id, image, ownerId, type, baseScore, isHero) {
         super(name, id, image, ownerId, type, baseScore, isHero);
-        this.ability = cardAbilities.summon;
+        //this.ability = cardAbilities.summon;
     }
 
     /** 
@@ -527,7 +201,7 @@ class SummonUnitCard extends UnitCard {
 class SpyUnitCard extends UnitCard {
     constructor(name, id, image, ownerId, type, baseScore, isHero) {
         super(name, id, image, ownerId, type, baseScore, isHero);
-        this.ability = cardAbilities.spy;
+        //this.ability = cardAbilities.spy;
     }
 
     /** 
@@ -554,7 +228,7 @@ class SpyUnitCard extends UnitCard {
 class HealUnitCard extends UnitCard {
     constructor(name, id, image, ownerId, type, baseScore, isHero) {
         super(name, id, image, ownerId, type, baseScore, isHero);
-        this.ability = cardAbilities.heal;
+        //this.ability = cardAbilities.heal;
     }
 
     /** 
@@ -572,20 +246,13 @@ class HealUnitCard extends UnitCard {
         const revivableCards = game.activePlayer.graveyard.filter(card => {
             return (card instanceof UnitCard) && !card.isHero
         });
-        console.log(revivableCards);
-        this.renderGraveyard(revivableCards);
-        // if the activePlayer has cards in their graveyard, let the activePlayer
-        // pick one of them to play onto the board
-        //activePlayer.playFromGraveyard();
-        // call the main game.playTurn method
-        //game.playTurn();
+        game.board.renderModal(
+            this._renderGraveyard(revivableCards)
+        )
     }
 
-    renderGraveyard(cardObjects) {
+    _renderGraveyard(cardObjects) {
         const docFrag = document.createDocumentFragment();
-        const modalOverlay = document.createElement('div');
-        const modalContentContainer = document.createElement('div');
-
         for (let card of cardObjects) {
             const jumboImage = document.createElement('img');
             const imageContainer = document.createElement('div');
@@ -593,29 +260,16 @@ class HealUnitCard extends UnitCard {
             jumboImage.classList.add('jumbo-card__image');
             jumboImage.src = `images/${card.image}`;
             imageContainer.appendChild(jumboImage);
-            modalContentContainer.appendChild(imageContainer);
+            docFrag.appendChild(imageContainer);
             jumboImage.addEventListener('click', function() {
                 game.activePlayer.graveyard = game.activePlayer.graveyard
                                               .filter(graveyardCard => graveyardCard.id !== card.id);
                 card.playCard();
+                const modalOverlay = document.querySelector('.modal__overlay');
                 document.body.removeChild(modalOverlay);
             });
         }
-        
-        const modalButton = document.createElement('button');
-        modalOverlay.classList.add('modal__overlay');
-        modalContentContainer.classList.add('modal__content');
-        
-        modalButton.classList.add('modal__button');
-        modalButton.textContent = 'X';
-        docFrag.appendChild(modalOverlay);
-        modalOverlay.appendChild(modalContentContainer);
-        modalOverlay.appendChild(modalButton);
-        modalButton.addEventListener('click', function() {
-            document.body.removeChild(modalOverlay);
-        });
-        
-        document.body.appendChild(docFrag);
+        return docFrag;
     }
 
 }
@@ -623,7 +277,7 @@ class HealUnitCard extends UnitCard {
 class TightBondUnitCard extends UnitCard {
     constructor(name, id, image, ownerId, type, baseScore, isHero, bondGroup) {
         super(name, id, image, ownerId, type, baseScore, isHero);
-        this.ability = cardAbilities.tightBond;
+        //this.ability = cardAbilities.tightBond;
         this.bondGroup = bondGroup;
     }
 }
@@ -631,14 +285,14 @@ class TightBondUnitCard extends UnitCard {
 class MoraleBoostUnitCard extends UnitCard {
     constructor(name, id, image, ownerId, type, baseScore, isHero) {
         super(name, id, image, ownerId, type, baseScore, isHero);
-        this.ability = cardAbilities.moraleBoost;
+        //this.ability = cardAbilities.moraleBoost;
     }
 }
 
 class CommandersHornUnitCard extends UnitCard {
     constructor(name, id, image, ownerId, type, baseScore, isHero) {
         super(name, id, image, ownerId, type, baseScore, isHero);
-        this.ability = cardAbilities.commandersHornUnit;
+        //this.ability = cardAbilities.commandersHornUnit;
     }
 }
 
@@ -802,7 +456,6 @@ class DecoyCard extends Card {
         const thisId = this.id;
         function handleClick(e) {
             const el = e.target;
-            console.log('test log test log test log');
             if (el.classList.contains('card-image') && el.parentElement.dataset.cardId !== thisId) {
                 const cardId = el.parentElement.dataset.cardId;
                 const playersRows = game.board.getPlayersRows(game.activePlayer);

@@ -35,7 +35,13 @@ const bondGroups = {
     northernRealms: {
         blueStripe: 'blue stripe',
         crinfridReaver: 'crinfrid reaver',
-        catapult: 'catapult'
+        catapult: 'catapult',
+        pfi: 'pfi'
+    },
+    nilfgaard: {
+        imperaBrigade: 'impera brigade',
+        nausicaaCavalry: 'nausicaa cavalry',
+        youngEmissary: 'young emissary'
     }
 }
 
@@ -43,3 +49,8 @@ const rowStatusEffects = {
     commandersHorn: 'commanders horn',
     weather: 'weather' 
 };
+
+const factions = {
+    northernRealms: 'northern realms',
+    nilfgaard: 'nilfgaard'
+}

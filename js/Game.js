@@ -1,6 +1,6 @@
 class Game {
-    constructor() {
-        this.players = this.createPlayers();
+    constructor(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
+        this.players = this.createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction);
         this.board = new Board(this.players[0], this.players[1]);
     }
 
@@ -8,10 +8,10 @@ class Game {
     * Creates two Player objects
     * @return  {array}   Array containing the Player objects
     */
-    createPlayers() {
+    createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
         return [
-            new Player('Player One', 0, true),
-            new Player('Player Two', 1, false)
+            new Player(playerOneName, playerOneFaction, 0, true),
+            new Player(playerTwoName, playerTwoFaction, 1, false)
         ];
     }
 
@@ -48,7 +48,7 @@ class Game {
     /** 
     * Contains all the logic for playing a turn
     */
-    playTurn() {
+    _playTurn() {
         const activePlayer = this.activePlayer;
         const inactivePlayer = this.inactivePlayer;
         // update the scores for each player
@@ -70,12 +70,49 @@ class Game {
             inactivePlayer.preRoundCleanUp();
         }
         // rerender everything
+        //this.board.renderSwapPlayersModal();
         activePlayer.renderHand();
         this.board.renderPlayersRows(activePlayer);
         activePlayer.renderInfoPanel();
         inactivePlayer.renderHand();
         this.board.renderPlayersRows(inactivePlayer);
         inactivePlayer.renderInfoPanel();
+    }
+
+    playTurn() {
+        // grab references to the active and inactive players
+        const activePlayer = this.activePlayer;
+        const inactivePlayer = this.inactivePlayer;
+
+        // update the 'state' of the board:
+        activePlayer.updatePlayerScore();
+        inactivePlayer.updatePlayerScore();
+
+        // call all the render functions to update the view with the new state.
+        // any extraneous rerenders will be dealt with by the respective render functions.
+        activePlayer.renderHand();
+        this.board.renderPlayersRows(activePlayer);
+        activePlayer.renderInfoPanel();
+        inactivePlayer.renderHand();
+        this.board.renderPlayersRows(inactivePlayer);
+        inactivePlayer.renderInfoPanel();
+
+        if (inactivePlayer.continueRound) {
+            this.board.renderSwapPlayersModal();
+        } else if (!activePlayer.continueRound) {
+            let winner = '';
+            const activePlayerScore = activePlayer.currentScore;
+            const inactivePlayerScore = inactivePlayer.currentScore;
+            if (activePlayerScore > inactivePlayerScore) {
+                activePlayer.roundsWon += 1;
+                winner = activePlayer.name;
+            } else if (inactivePlayerScore > activePlayerScore) {
+                inactivePlayer.roundsWon += 1;
+                winner = inactivePlayer.name;
+            }
+            this.board.renderEndOfRoundModal(winner);
+        }
+
     }
 
     /** 
@@ -92,6 +129,8 @@ class Game {
                                game.playTurn();
                            });
         }
+        const startScreenElement = document.querySelector('.player-select');
+        document.body.removeChild(startScreenElement);
     }
 
     /** 

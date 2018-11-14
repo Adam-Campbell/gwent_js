@@ -1,14 +1,41 @@
 class Player {
-    constructor(name, id, active) {
+    constructor(name, faction, id, active) {
         this.name = name;
         this.id = id;
         this.currentScore = 0;
         this.roundsWon = 0;
         this.continueRound = true;
-        this.deck = this.createDeck();
+        this.deck = this.createDeck(
+            this._setDeckSource(faction)
+        );
         this.hand = this.createHand();
         this.graveyard = [];
         this.active = active;
+        this.image = this._setImage(faction);
+        this._prevHandState = {
+            cards: [],
+            isActivePlayer: false
+        };
+    }
+
+    _setImage(faction) {
+        switch (faction) {
+            case factions.northernRealms:
+                return 'foltest_the_steel_forged.jpg';
+
+            case factions.nilfgaard:
+                return 'emhyr_his_imperial_majesty.jpg';
+        }
+    }
+
+    _setDeckSource(faction) {
+        switch (faction) {
+            case factions.northernRealms:
+                return northernRealmsCards;
+
+            case factions.nilfgaard:
+                return nilfgardCards;
+        }
     }
 
     /** 
@@ -16,117 +43,9 @@ class Player {
     * data to determine arguments to pass in.
     * @return  {array}   An array of Card objects
     */
-    oldcreateDeck() {
+    createDeck(deckSource) {
         const playerId = this.id;
-        return cardData.map(function(card, index) {
-            
-            switch (card.ability) {
-                case cardAbilities.standard:
-                    return new Card(
-                        card.name, 
-                        index, 
-                        card.baseScore, 
-                        card.type, 
-                        card.isHero, 
-                        card.image, 
-                        playerId
-                    );
-
-                case cardAbilities.scorchUnit:
-                    return new ScorchUnitCard(
-                        card.name,
-                        index,
-                        card.baseScore,
-                        card.type,
-                        card.isHero,
-                        card.image,
-                        playerId
-                    );
-
-                case cardAbilities.summon:
-                    return new SummonCard(
-                        card.name,
-                        index,
-                        card.baseScore,
-                        card.type,
-                        card.isHero,
-                        card.image,
-                        playerId
-                    );
-
-                case cardAbilities.spy:
-                    return new SpyCard(
-                        card.name,
-                        index,
-                        card.baseScore,
-                        card.type,
-                        card.isHero,
-                        card.image,
-                        playerId
-                    );
-
-                case cardAbilities.heal:
-                    return new HealCard(
-                        card.name,
-                        index,
-                        card.baseScore,
-                        card.type,
-                        card.isHero,
-                        card.image,
-                        playerId  
-                    );
-
-                case cardAbilities.tightBond:
-                    return new TightBondCard(
-                        card.name,
-                        index,
-                        card.baseScore,
-                        card.type,
-                        card.isHero,
-                        card.image,
-                        playerId,
-                        card.bondGroup 
-                    );
-
-                case cardAbilities.moraleBoost:
-                    return new MoraleBoostCard(
-                        card.name,
-                        index,
-                        card.baseScore,
-                        card.type,
-                        card.isHero,
-                        card.image,
-                        playerId 
-                    );
-
-                case cardAbilities.commandersHornUnit:
-                    return new CommandersHornUnitCard(
-                        card.name,
-                        index,
-                        card.baseScore,
-                        card.type,
-                        card.isHero,
-                        card.image,
-                        playerId 
-                    );
-
-                default:
-                    return new Card(
-                        card.name, 
-                        index, 
-                        card.baseScore, 
-                        card.type, 
-                        card.isHero, 
-                        card.image, 
-                        playerId
-                    ); 
-            }
-        });
-    }
-
-    createDeck() {
-        const playerId = this.id;
-        return cardData.map(function(card, index) {
+        return deckSource.map(function(card, index) {
             let id = generateId(12); 
             
             switch(card.cardType) {
@@ -363,20 +282,70 @@ class Player {
             row.reset();
         }
         game.board.renderPlayersRows(this);
+        this.renderHand();
+        this.renderInfoPanel();
     }
 
     /** 
     * Render the card dock containing the players current hand 
     */
-    renderHand() {
+    _renderHand() {
         const targetElement = document.querySelector(`.card-dock[data-player-id="${this.id}"]`);
         const frag = document.createDocumentFragment();
         const currentHand = this.hand;
-        for (let card of currentHand) {
-            frag.appendChild(card.render());
+        if (this.active) {
+            for (let card of currentHand) {
+                frag.appendChild(card.render());
+            }
+        } else {
+            for (let card of currentHand) {
+                frag.appendChild(card.renderCardBack());
+            }
         }
         targetElement.innerHTML = "";
         targetElement.appendChild(frag);
+    }
+
+    renderHand() {
+        if (this._determineIfStateChanged()) {
+            this._renderHand();
+        }
+    }
+
+    _getCurrentState() {
+        return {
+            cards: this.hand.map(card => card.id),
+            isActivePlayer: this.active
+        };
+    }
+
+    _determineIfStateChanged() {
+        const currentState = this._getCurrentState();
+        const prevState = this._prevHandState;
+        let hasChanged = false;
+        // if cards arrays haves different lengths or isActivePlayer is different the set 
+        // hasChanged to true
+        if (
+            prevState.cards.length !== currentState.cards.length ||
+            prevState.isActivePlayer !== currentState.isActivePlayer
+        ) {
+            hasChanged = true;
+        } else {
+            // if first two tests are passed, compare each element of the cards arrays to ensure 
+            // they are the same
+            for (let i = 0; i < currentState.cards.length; i++) {
+                if (prevState.cards[i] !== currentState.cards[i]) {
+                    hasChanged = true;
+                }
+            }
+        }
+        // if hasChanged is true, set _prevState to currentState, and return true, else return false
+        if (hasChanged) {
+            this._prevHandState = currentState;
+            return true;
+        } else {
+            return false; 
+        }
     }
 
     /** 
