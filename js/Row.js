@@ -6,6 +6,56 @@ class Row {
         this.score = 0;
         this.weatherEffect = false;
         this.commandersHorn = false;
+        this._prevState = {
+            units: [],
+            weatherEffect: false,
+            commandersHorn: false
+        };
+    }
+
+    _getCurrentState() {
+        return {
+            units: this.units.map(card => card.id),
+            weatherEffect: this.weatherEffect,
+            commandersHorn: this.commandersHorn
+        };
+    }
+
+    _determineIfStateChanged() {
+        const currentState = this._getCurrentState();
+        const prevState = this._prevState;
+        let hasChanged = false;
+        // first compare whether prevState and curentState have different amounts of units, or 
+        // different effects statuses. If yes to any of those set hasChanged to true.
+        if (
+            prevState.units.length !== currentState.units.length ||
+            prevState.weatherEffect !== currentState.weatherEffect ||
+            prevState.commandersHorn !== currentState.commandersHorn
+        ) {
+            hasChanged = true;
+        } else {
+            // if the first test is passed, now go through the units arrays for prevState and 
+            // currentState and compare each individual id.
+            for (let i = 0; i < prevState.units.length; i ++) {
+                if (prevState.units[i] !== currentState.units[i]) {
+                    hasChanged = true;
+                }
+            }
+        }
+
+        // if hasChanged is true, update _prevState with currentState, and return true, else return false.
+        if (hasChanged) {
+            this._prevState = currentState;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    render() {
+        if (this._determineIfStateChanged()) {
+            this._renderIfChanged();
+        }
     }
 
     /** 
@@ -27,7 +77,7 @@ class Row {
     /** 
     * Render this particular row.
     */
-    render() {
+    _renderIfChanged() {
         const targetRow = document.querySelector(`.row[data-player-id="${this.owner.id}"][data-unit-type="${this.type}"]`);
         const cardContainer = targetRow.querySelector('.row__inner');
         const rowScore = targetRow.querySelector('.row__score-text'); 
@@ -40,6 +90,7 @@ class Row {
         cardContainer.innerHTML = "";
         cardContainer.appendChild(frag);
         rowScore.textContent = this.score;
+        console.log(`The ${this.type} row for ${this.owner.name} has re-rendered!`);
     }
 
     /** 
@@ -70,7 +121,7 @@ class Row {
     * current state of the row. All logic involved in score modifiers etc is in this method.
     */
     computeScore() {
-        const regCards = this.units.filter(card => !card.isHero);
+        const regCards = this.units.filter(card => card instanceof UnitCard && !card.isHero);
         if (regCards.length === 0) return;
         // to begin with reset everything back to the base score
         for (let card of regCards) {
@@ -85,7 +136,7 @@ class Row {
 
         // then we deal with tight bond cards
         const bondGroups = {};
-        const bondCards = regCards.filter(card => card instanceof TightBondCard);
+        const bondCards = regCards.filter(card => card instanceof TightBondUnitCard);
         if (bondCards.length) {
             // first determine which tight bond groups are present, and how many units from
             // each group are present. 
@@ -99,7 +150,7 @@ class Row {
             // now we go over all of them again and apply the appropriate modifiers, with
             // full knowledge of how many units from each bondGroup are present.
             for (let card of bondCards) {
-                card.currentScore = card.baseScore * bondGroups[card.bondGroup];
+                card.currentScore = card.currentScore * bondGroups[card.bondGroup];
             }
         }
         
@@ -112,13 +163,13 @@ class Row {
             // if and only if commanders horn not present on row, deal with any cards that 
             // have the commanders horn ability.
         } else {
-            const commandersHornCards = regCards.filter(card => card instanceof CommandersHornCard);
+            const commandersHornCards = regCards.filter(card => card instanceof CommandersHornUnitCard);
             // if there is one commanders horn card, double the currentScore of every non hero card
             // on the row except for the commanders horn card itself. 
             if (commandersHornCards.length === 1) {
 
                 for (let card of regCards) {
-                    if (!(card instanceof CommandersHornCard)) {
+                    if (!(card instanceof CommandersHornUnitCard)) {
                         card.currentScore *= 2;
                     }
                 }
@@ -131,12 +182,12 @@ class Row {
             }
 
             // then we deal with morale boost cards
-            const moraleBoostCards = regCards.filter(card => card instanceof MoraleBoostCard);
+            const moraleBoostCards = regCards.filter(card => card instanceof MoraleBoostUnitCard);
             // if exactly one morale boost card is present, add 1 to the currentScore of every
             // non hero card on row besides the morale boost card itslf. 
             if (moraleBoostCards.length === 1) {
                 for (let card of regCards) {
-                    if (!(card instanceof MoraleBoostCard)) {
+                    if (!(card instanceof MoraleBoostUnitCard)) {
                         card.currentScore += 1;
                     }
                 }
@@ -155,7 +206,8 @@ class Row {
     * score property to that value.
     */
     setScore() {
-        const newScore = this.units.reduce((acc, nextCard, index) => {
+        const onlyUnitCards = this.units.filter(card => card instanceof UnitCard);
+        const newScore = onlyUnitCards.reduce((acc, nextCard, index) => {
             return acc + nextCard.currentScore;
         }, 0);
         this.score = newScore;

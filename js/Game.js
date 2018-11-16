@@ -1,6 +1,7 @@
 class Game {
-    constructor() {
-        this.players = this.createPlayers();
+    constructor(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
+        this.cardBank = {};
+        this.players = this.createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction);
         this.board = new Board(this.players[0], this.players[1]);
     }
 
@@ -8,10 +9,10 @@ class Game {
     * Creates two Player objects
     * @return  {array}   Array containing the Player objects
     */
-    createPlayers() {
+    createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
         return [
-            new Player('Player One', 0, true),
-            new Player('Player Two', 1, false)
+            new Player(playerOneName, playerOneFaction, 0, true, this),
+            new Player(playerTwoName, playerTwoFaction, 1, false, this)
         ];
     }
 
@@ -41,53 +42,69 @@ class Game {
         return this.players.find(player => !player.active);
     }
 
+    getPlayerById(id) {
+        return this.players.find(player => player.id === id);
+    }
+
     /** 
     * Contains all the logic for playing a turn
     */
     playTurn() {
+        // grab references to the active and inactive players
         const activePlayer = this.activePlayer;
         const inactivePlayer = this.inactivePlayer;
-        // update the scores for each player
+
+        // update the 'state' of the board:
         activePlayer.updatePlayerScore();
         inactivePlayer.updatePlayerScore();
-        // deal with player switching / end of round work
+
+        // call all the render functions to update the view with the new state.
+        // any extraneous rerenders will be dealt with by the respective render functions.
+        activePlayer.renderHand();
+        this.board.renderPlayersRows(activePlayer);
+        activePlayer.refreshInfoPanel();
+        inactivePlayer.renderHand();
+        this.board.renderPlayersRows(inactivePlayer);
+        inactivePlayer.refreshInfoPanel();
+
         if (inactivePlayer.continueRound) {
-            this.switchActivePlayer();
+            this.board.renderSwapPlayersModal(() => {
+                this.switchActivePlayer();
+                this.activePlayer.renderHand();
+                this.activePlayer.refreshInfoPanel();
+                this.inactivePlayer.renderHand();
+                this.inactivePlayer.refreshInfoPanel();
+            });
         } else if (!activePlayer.continueRound) {
+            let winner = '';
             const activePlayerScore = activePlayer.currentScore;
             const inactivePlayerScore = inactivePlayer.currentScore;
             if (activePlayerScore > inactivePlayerScore) {
                 activePlayer.roundsWon += 1;
+                winner = activePlayer.name;
             } else if (inactivePlayerScore > activePlayerScore) {
                 inactivePlayer.roundsWon += 1;
+                winner = inactivePlayer.name;
             }
-            this.switchActivePlayer();
-            activePlayer.preRoundCleanUp();
-            inactivePlayer.preRoundCleanUp();
+            this.board.renderEndOfRoundModal(winner, () => {
+                this.activePlayer.preRoundCleanUp();
+                this.inactivePlayer.preRoundCleanUp();
+            });
         }
-        // rerender everything
-        activePlayer.renderHand();
-        this.board.renderPlayersRows(activePlayer);
-        activePlayer.renderInfoPanel();
-        inactivePlayer.renderHand();
-        this.board.renderPlayersRows(inactivePlayer);
-        inactivePlayer.renderInfoPanel();
+
     }
 
     /** 
     * Performs necessary work to initialise the game.
     */
     init() {
+        this.board.renderBoardSkeleton();
         for (let player of this.players) {
             player.renderHand();
             player.renderInfoPanel();
-            const playerInfoPanel = document.querySelector(`.player-info[data-player-id="${player.id}"]`);
-            playerInfoPanel.querySelector('.player-info__end-round')
-                           .addEventListener('click', () => {
-                               player.finishRound();
-                               game.playTurn();
-                           });
         }
+        // const startScreenElement = document.querySelector('.player-select');
+        // document.body.removeChild(startScreenElement);
     }
 
     /** 

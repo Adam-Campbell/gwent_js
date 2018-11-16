@@ -8,16 +8,55 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" 
         type="text/css"
     />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Federant" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script 
+        type="text/javascript" 
+        src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"
+    ></script>
     <title>Gwent</title>
 </head>
 <body>
    <div class="container">
-       <div class="info-panel">
+        <div class="player-select">
+            <h1>Just a placeholder</h1>
+            <div>
+                <p>Player One</p>
+                <label for="player-one-name">Choose name:</label>
+                <input type="text" id="player-one-name" value="geralt">
+                    <label for="player-one-faction">Choose faction:</label>
+                    <select id="player-one-faction">
+                        <option value="northern realms">Northern Realms</option>
+                        <option value="nilfgaard">Nilfgaard</option>
+                    </select>
+            </div>
+            <div>
+                    <p>Player Two</p>
+                    <label for="player-two-name">Choose name:</label>
+                    <input type="text" id="player-two-name" value="ciri">
+                    <label for="player-two-faction">Choose faction:</label>
+                    <select id="player-two-faction">
+                        <option value="northern realms">Northern Realms</option>
+                        <option value="nilfgaard" selected>Nilfgaard</option>
+                    </select>
+                </div>
+            <button class="start-button">Go</button>
+        </div>
+       <!-- <div class="info-panel">
             <button class="end-round-button" data-player-id="0">Player One End Round</button>
             <button class="end-round-button" data-player-id="1">Player Two End Round</button>
-            <div class="player-info" data-player-id="0">
-                <p class="player-info__name">Player One</p>
+            <div class="player-info" data-player-id="0"></div>
+            <div class="player-info" data-player-id="1"></div> -->
+            <!-- <div class="player-info" data-player-id="0">
+                <div class="player-info__header">
+                    <img class="player-info__image" src="">
+                    <div class="player-info__header-text-container">
+                        <p class="player-info__name"></p>
+                        <p class="player-info__faction"></p>
+                    </div>
+                </div>
                 <p class="player-info__rounds-won">0 rounds won</p>
                 <p class="player-info__hand">10 cards in hand</p>
                 <p class="player-info__current-score">Current score: 0</p>
@@ -25,83 +64,139 @@
                 <p class="player-info__playing-status"></p>
             </div>
             <div class="player-info" data-player-id="1">
-                    <p class="player-info__name">Player Two</p>
+                    <div class="player-info__header">
+                        <img class="player-info__image" src="">
+                        <div class="player-info__header-text-container">
+                            <p class="player-info__name"></p>
+                            <p class="player-info__faction"></p>
+                        </div>
+                    </div>
                     <p class="player-info__rounds-won">0 rounds won</p>
                     <p class="player-info__hand">10 cards in hand</p>
                     <p class="player-info__current-score">Current score: 0</p>
                     <button class="player-info__end-round">End round</button>
                     <p class="player-info__playing-status"></p>
-                </div>
-       </div>
-       <div class="board">
-           <div class="card-dock" data-player-id="0">
-                <!-- <div class="card">
-                    <img class="card-image "src="images/dijkstra.jpg"/>
-                </div>
-                <div class="card">
-                    <img class="card-image "src="images/crinfrid_reaver.jpg"/>
-                </div>
-                <div class="card">
-                    <img class="card-image "src="images/blue_stripes_commando.jpg"/>
                 </div> -->
+       <!-- </div>
+       <div class="board"></div> -->
+       <!-- <div class="board">
+           <div class="card-dock" data-player-id="0">
             </div>
             <div class="row" data-player-id="0" data-unit-type="siege">
                 <div class="row__inner row--siege"></div>
                 <div class="row__score-container">
-                    <p class="row__score-text"></p>
+                    <p class="row__score-text">0</p>
                 </div>
             </div>          
             <div class="row" data-player-id="0" data-unit-type="ranged">
                 <div class="row__inner row--ranged"></div>
                 <div class="row__score-container">
-                    <p class="row__score-text"></p>
+                    <p class="row__score-text">0</p>
                 </div>
             </div>
             <div class="row" data-player-id="0" data-unit-type="infantry">
                 <div class="row__inner row--infantry"></div>
                 <div class="row__score-container">
-                    <p class="row__score-text"></p>
+                    <p class="row__score-text">0</p>
                 </div>
             </div>
             <div class="row" data-player-id="1" data-unit-type="infantry">
                 <div class="row__inner row--infantry"></div>
                 <div class="row__score-container">
-                    <p class="row__score-text"></p>
+                    <p class="row__score-text">0</p>
                 </div>
             </div>
             <div class="row" data-player-id="1" data-unit-type="ranged">
                 <div class="row__inner row--ranged"></div>
                 <div class="row__score-container">
-                    <p class="row__score-text"></p>
+                    <p class="row__score-text">0</p>
                 </div>
             </div>
             <div class="row" data-player-id="1" data-unit-type="siege">
                 <div class="row__inner row--siege"></div>
                 <div class="row__score-container">
-                    <p class="row__score-text"></p>
+                    <p class="row__score-text">0</p>
                 </div>
             </div>
             <div class="card-dock" data-player-id="1">
-               <!-- <div class="card">
-                   <img class="card-image "src="images/geralt.jpg"/>
-               </div>
-               <div class="card">
-                    <img class="card-image "src="images/ciri.jpg"/>
-                </div>
-                <div class="card">
-                    <img class="card-image "src="images/yennefer.jpg"/>
-                </div> -->
            </div>
-       </div>
+       </div> -->
    </div>
-   <div class="modal__overlay">
+   <!-- <div class="modal__overlay">
        <div class="modal__content">
            <div class="jumbo-card__container">
                <img class="jumbo-card__image" src=""/>
            </div>
            <button class="modal__button">X</button>
        </div>
-   </div>
+   </div> -->
+   <script id="playerInfoPanelTemplate" type="text/x-handlebars-template">
+        <div class="player-info__header">
+            <img class="player-info__image" src="images/{{image}}">
+            <div class="player-info__header-text-container">
+                <p class="player-info__name">{{name}}</p>
+                <p class="player-info__faction">{{faction}}</p>
+            </div>
+        </div>
+        <p class="player-info__rounds-won">0 rounds won</p>
+        <p class="player-info__hand">10 cards in hand</p>
+        <p class="player-info__current-score">Current score: 0</p>
+        <button class="player-info__end-round">End round</button>
+        <p class="player-info__playing-status">
+            {{#if active}}
+            Now Playing...
+            {{/if}}
+        </p>
+   </script>
+    <script id="boardTemplate" type="text/x-handlebars-template">
+        <div class="info-panel">
+            <div class="player-info" data-player-id="0"></div>
+            <div class="player-info" data-player-id="1"></div>
+        </div>
+        <div class="board">
+            <div class="card-dock" data-player-id="0">
+             </div>
+             <div class="row" data-player-id="0" data-unit-type="siege">
+                 <div class="row__inner row--siege"></div>
+                 <div class="row__score-container">
+                     <p class="row__score-text">0</p>
+                 </div>
+             </div>          
+             <div class="row" data-player-id="0" data-unit-type="ranged">
+                 <div class="row__inner row--ranged"></div>
+                 <div class="row__score-container">
+                     <p class="row__score-text">0</p>
+                 </div>
+             </div>
+             <div class="row" data-player-id="0" data-unit-type="infantry">
+                 <div class="row__inner row--infantry"></div>
+                 <div class="row__score-container">
+                     <p class="row__score-text">0</p>
+                 </div>
+             </div>
+             <div class="row" data-player-id="1" data-unit-type="infantry">
+                 <div class="row__inner row--infantry"></div>
+                 <div class="row__score-container">
+                     <p class="row__score-text">0</p>
+                 </div>
+             </div>
+             <div class="row" data-player-id="1" data-unit-type="ranged">
+                 <div class="row__inner row--ranged"></div>
+                 <div class="row__score-container">
+                     <p class="row__score-text">0</p>
+                 </div>
+             </div>
+             <div class="row" data-player-id="1" data-unit-type="siege">
+                 <div class="row__inner row--siege"></div>
+                 <div class="row__score-container">
+                     <p class="row__score-text">0</p>
+                 </div>
+             </div>
+             <div class="card-dock" data-player-id="1">
+            </div>
+        </div>
+    </script>
+   <script type="text/javascript" src="js/helpers.js"></script>
    <script type="text/javascript" src="js/constants.js"></script>
    <script type="text/javascript" src="js/cardData.js"></script>
    <script type="text/javascript" src="js/Game.js"></script>
