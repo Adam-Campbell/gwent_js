@@ -1,3 +1,42 @@
+/*
+
+External interface:
+
+Properties:
+name - {string} - the name of this player.
+faction - {string} - the faction of this player.
+id - {number} - the id of this player.
+currentScore - {number} - the current score of this player.
+roundsWon - {number} - the number of rounds won by this player.
+continueRound - {boolean} - true if this player is still participating in round, else false. 
+deck - array of Card objects representing the cards in this players deck. 
+hand - array of Card object representing the cards in this players hand.
+graveyard - array of Card objects representing the cards in this players graveyard.
+active - {boolean} - true if this player is the currently active player, else false. 
+image - {string} - the url for this players image. 
+
+
+Methods:
+drawFromDeck() - draws a specified amount of cards from this players deck and places them 
+into their hand.
+addCardToDeck() - adds a specific card to this players deck.
+removeCardFromDeck() - removes a specific card from this players deck.
+addCardToGraveyard() - adds a specific card to this players graveyard.
+removeCardFromGraveyard() - removes a specific card from this players graveyard. 
+addCardToHand() - adds a specific card to this players hand.
+removeFromHand() - removes a specific card from this players hand. 
+updatePlayerScore() - updates the current score for this player.
+preRoundsCleanUp() - resets certain properties on this Player object so that it is ready for
+the next round.
+renderHand() - render this players hand.
+renderInfoPanel() - perform the initial render of the info panel for this player.
+refreshInfoPanel() -  rerender the elements within this players info panel that are subject to change
+from one turn to the next. 
+renderGraveyard() - render this players graveyard. 
+
+
+*/
+
 class Player {
     constructor(name, faction, id, active, gameRef) {
         this.name = name;
@@ -6,14 +45,14 @@ class Player {
         this.currentScore = 0;
         this.roundsWon = 0;
         this.continueRound = true;
-        this.deck = this.createDeck(
+        this.deck = this._createDeck(
             this._setDeckSource(faction), 
             gameRef
         );
         for (let card of this.deck) {
             gameRef.cardBank[card.id] = card;
         }
-        this.hand = this.createHand();
+        this.hand = this._createHand();
         this.graveyard = [];
         this.active = active;
         this.image = this._setImage(faction);
@@ -23,6 +62,10 @@ class Player {
         };
     }
 
+    /**
+     * Set this players image based on their faction.
+     * @param {string} faction - the players faction. 
+     */
     _setImage(faction) {
         switch (faction) {
             case factions.northernRealms:
@@ -33,6 +76,10 @@ class Player {
         }
     }
 
+    /**
+     * Set the source for this players deck based on their faction.
+     * @param {string} faction - the players faction. 
+     */
     _setDeckSource(faction) {
         switch (faction) {
             case factions.northernRealms:
@@ -48,173 +95,21 @@ class Player {
     * data to determine arguments to pass in.
     * @return  {array}   An array of Card objects
     */
-    createDeck(deckSource, gameRef) {
+    _createDeck(deckSource, gameRef) {
         const playerId = this.id;
-        return deckSource.map(function(card, index) {
-            let id = generateId(12); 
-            
-            switch(card.cardType) {
-                
-                case cardTypes.unitCard:
-                    return new UnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero
-                    );
-
-                case cardTypes.scorchUnitCard:
-                    return new ScorchUnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero
-                    );
-
-                case cardTypes.summonUnitCard:
-                    return new SummonUnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero
-                    );
-
-                case cardTypes.spyUnitCard:
-                    return new SpyUnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero
-                    );
-
-                case cardTypes.healUnitCard:
-                    return new HealUnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero
-                    );
-
-                case cardTypes.tightBondUnitCard:
-                    return new TightBondUnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero,
-                        card.bondGroup
-                    );
-
-                case cardTypes.moraleBoostUnitCard:
-                    return new MoraleBoostUnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero
-                    );
-
-                case cardTypes.commandersHornUnitCard:
-                    return new CommandersHornUnitCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type,
-                        card.baseScore,
-                        card.isHero
-                    );
-
-                case cardTypes.weatherCard:
-                    return new WeatherCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef,
-                        card.type
-                    );
-
-                case cardTypes.clearWeatherCard:
-                    return new ClearWeatherCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef
-                    );
-
-                case cardTypes.scorchCard:
-                    return new ScorchCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef
-                    );
-
-                case cardTypes.decoyCard:
-                    return new DecoyCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef
-                    );
-
-                case cardTypes.commandersHornCard:
-                    return new CommandersHornCard(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef
-                    );
-
-                default:
-                    return new Card(
-                        card.name,
-                        id,
-                        card.image,
-                        playerId,
-                        gameRef
-                    );
-            }
-        });
+        const cardFactory = new CardFactory();
+        return deckSource.map(card => cardFactory.createCard({
+            cardData: card,
+            ownerId: playerId,
+            gameRef: gameRef
+        }));
     }
 
     /** 
     * Creates a hand of 10 random cards from the players deck
     * @return  {array}   An array of Card objects
     */
-    createHand() {
+    _createHand() {
         const hand = [];
         for (let i = 0; i < 10; i++) {
             const cardToDraw = Math.floor(Math.random() * this.deck.length);
@@ -238,28 +133,54 @@ class Player {
         this.renderHand();
     }
 
-    /** 
-    * Picks a random revivable card from the players graveyard and plays it onto the board. 
-    */
-    __noLongerUsed__playFromGraveyard() {
-        // filter out hero cards which can't be revived
-        const revivableCards = this.graveyard.filter(card => !card.isHero);
-        // just play turn if no revivable cards
-        if (revivableCards.length === 0) {
-            game.playTurn();
-            return;
-        };
-        // select a random card from the pool of elligible cards
-        const randomIndex = Math.floor(Math.random() * revivableCards.length);
-        const cardToRevive = revivableCards[randomIndex];
-        // locate that card within the original unfiltered graveyard and remove it
-        const indexInGraveyard = this.graveyard.findIndex(card => {
-            return card.id === cardToRevive.id && card.ownerId === cardToRevive.ownerId;
-        });
-        this.graveyard.splice(indexInGraveyard, 1);
-        // play the card onto the board
-        cardToRevive.playCard();
+    /**
+     * Add a specific card into the players deck
+     * @param {Object} cardObject - the card to add
+     */
+    addCardToDeck(cardObject) {
+        this.deck.push(cardObject);
     }
+
+    /**
+     * Remove a specific card from the players deck
+     * @param {Object} cardObject - the card to remove
+     */
+    removeCardFromDeck(cardObject) {
+        this.deck = this.deck.filter(card => card.id !== cardObject.id);
+    }
+
+    /**
+     * Add a specific card into the players graveyard
+     * @param {Object} cardObject - the card to add
+     */
+    addCardToGraveyard(cardObject) {
+        this.graveyard.push(cardObject);
+    }
+
+    /**
+     * Remove a specific card from the players graveyard
+     * @param {Object} cardObject - the card to remove
+     */
+    removeCardFromGraveyard(cardObject) {
+        this.graveyard = this.graveyard.filter(card => card.id !== cardObject.id)
+    }
+
+    /**
+     * Add a specific card into the players hand
+     * @param {Object} cardObject - the card to add
+     */
+    addCardToHand(cardObject) {
+        this.hand.push(cardObject);
+    }
+
+    /**
+     * Removes a specific card from the players hand
+     * @param {Object} cardObject - the card to remove 
+     */
+    removeFromHand(cardObject) {
+        this.hand = this.hand.filter(card => card.id !== cardObject.id);
+    }
+
 
     /** 
     * Update the score for each individual row for this player and aggregate the results
@@ -290,11 +211,6 @@ class Player {
     * No parameters or return value    
     */
     preRoundCleanUp() {
-        // const toGraveyard = this._hand.filter(card => card.inPlay);
-        // const toHand = this._hand.filter(card => !card.inPlay);
-        // this.graveyard = [...this.graveyard, ...toGraveyard];
-        // this._hand = [...toHand];
-
         this.currentScore = 0;
         this.continueRound = true;
         const playersRows = game.board.getPlayersRows(this);
@@ -307,7 +223,7 @@ class Player {
     }
 
     /** 
-    * Render the card dock containing the players current hand 
+    * Render the card dock containing the players current hand
     */
     _renderHandIfChanged() {
         const targetElement = document.querySelector(`.card-dock[data-player-id="${this.id}"]`);
@@ -326,21 +242,25 @@ class Player {
         targetElement.appendChild(frag);
     }
 
+    /**
+     * Render the players hand only if the state of their hand has changed since the last render. 
+     */
     renderHand() {
-        if (this._determineIfStateChanged()) {
+        if (this._determineIfHandStateChanged()) {
             this._renderHandIfChanged();
         }
     }
 
-    _getCurrentState() {
+
+    _getCurrentHandState() {
         return {
             cards: this.hand.map(card => card.id),
             isActivePlayer: this.active
         };
     }
 
-    _determineIfStateChanged() {
-        const currentState = this._getCurrentState();
+    _determineIfHandStateChanged() {
+        const currentState = this._getCurrentHandState();
         const prevState = this._prevHandState;
         let hasChanged = false;
         // if cards arrays haves different lengths or isActivePlayer is different then set 
@@ -368,37 +288,6 @@ class Player {
         }
     }
 
-    /** 
-    * Removes a card from the players hand. 
-    */
-    removeFromHand(cardObject) {
-        this.hand = this.hand.filter(card => card.id !== cardObject.id);
-        return cardObject;
-    }
-
-    /** 
-    * Render the info panel for this player
-    */
-    _renderInfoPanel() {
-        // grab the info panel for this player
-        const targetInfoPanel = document.querySelector(`.player-info[data-player-id="${this.id}"]`);
-        targetInfoPanel.querySelector('.player-info__name').textContent = this.name;
-        targetInfoPanel.querySelector('.player-info__faction').textContent = this.faction;
-        targetInfoPanel.querySelector('.player-info__image').src = `images/${this.image}`;
-        // set rounds won to this.roundsWon
-        targetInfoPanel.querySelector('.player-info__rounds-won').textContent = `${this.roundsWon} rounds won`;
-        // set # cards in hand to this.hand.length
-        targetInfoPanel.querySelector('.player-info__hand').textContent = `${this.hand.length} cards in hand`;
-        // set current score to this.currentScore
-        targetInfoPanel.querySelector('.player-info__current-score').textContent = `Current Score: ${this.currentScore}`;
-        // adjust the now playing status
-        const playingStatus = targetInfoPanel.querySelector('.player-info__playing-status');
-        if (game.activePlayer.id === this.id) {
-            playingStatus.textContent = 'Now playing...';
-        } else {
-            playingStatus.textContent = '';
-        }
-    }
     /**
      * Renders the initial info panel for this player. Only called at the start of the match, 
      * subsequent rerenders to adjust things like score utilise the refreshInfoPanel method.
@@ -436,6 +325,23 @@ class Player {
         } else {
             playingStatus.textContent = '';
         }
+    }
+
+    renderGraveyard() {
+        const docFrag = document.createDocumentFragment();
+        for (let card of this.graveyard) {
+            const jumboImage = document.createElement('img');
+            const imageContainer = document.createElement('div');
+            imageContainer.classList.add('jumbo-card__container');
+            jumboImage.classList.add('jumbo-card__image');
+            jumboImage.src = `images/${card.image}`;
+            imageContainer.appendChild(jumboImage);
+            docFrag.appendChild(imageContainer);
+        }
+        renderInModal({
+            contentToRender: docFrag,
+            withButton: true
+        });
     }
 
 }

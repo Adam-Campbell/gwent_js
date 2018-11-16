@@ -1,3 +1,26 @@
+/*
+
+External interface:
+
+Properties:
+owner - the Player object for the player that owns this row.
+type - a string representation of the type of unit that this row accepts.
+units - an array of Card object representing the cards currently on this row.
+score - a number representing the current score of this row.
+weatherEffect - boolean, true if a weather effect is present, otherwise false.
+commandersHorn - boolean, true if commanders horn is present, otherwise false.
+
+
+Methods:
+render() - renders this row.
+addCard() - adds a specific card to this row.
+removeCard() - removes a specific card from this row.
+reset() - resets to this row to its original, blank state.
+calculateScore() - determines the correct score for this row given its current state, and updates
+the score property accordingly. 
+
+*/
+
 class Row {
     constructor(owner, type) {
         this.owner = owner;
@@ -13,6 +36,10 @@ class Row {
         };
     }
 
+    /**
+     * Returns a serializable representation of the current state of this row, 
+     * detailing the cards present and any active effects
+     */
     _getCurrentState() {
         return {
             units: this.units.map(card => card.id),
@@ -21,6 +48,12 @@ class Row {
         };
     }
 
+    /**
+     * Determines whether the current state of the row is different from the previously
+     * captured state of the row, if yes it returns true and updates the _prevState 
+     * property with the new snapshot, if not it returns false.
+     * @returns {boolean} true if state has changed since previous snapshot, false if not.
+     */
     _determineIfStateChanged() {
         const currentState = this._getCurrentState();
         const prevState = this._prevState;
@@ -52,28 +85,6 @@ class Row {
         }
     }
 
-    render() {
-        if (this._determineIfStateChanged()) {
-            this._renderIfChanged();
-        }
-    }
-
-    /** 
-    * Adds a unit to this row 
-    * @param   {Object}    cardObject to be added to the row .
-    */
-    addUnit(cardObject) {
-        this.units.push(cardObject);
-    }
-
-    /** 
-    * Removes a unit from this row 
-    * @param   {Object}    cardObject to be removed from the row.
-    */
-    removeUnit(cardObject) {
-        this.units = this.units.filter(unit => unit.id !== cardObject.id);
-    }
-
     /** 
     * Render this particular row.
     */
@@ -91,6 +102,31 @@ class Row {
         cardContainer.appendChild(frag);
         rowScore.textContent = this.score;
         console.log(`The ${this.type} row for ${this.owner.name} has re-rendered!`);
+    }
+
+    /**
+     * Rerenders the row only if the state of the row has changed since the last render. 
+     */
+    render() {
+        if (this._determineIfStateChanged()) {
+            this._renderIfChanged();
+        }
+    }
+
+    /** 
+    * Adds a specific card to this row 
+    * @param   {Object}    cardObject to be added to the row .
+    */
+    addCard(cardObject) {
+        this.units.push(cardObject);
+    }
+
+    /** 
+    * Removes a specific card from this row 
+    * @param   {Object}    cardObject to be removed from the row.
+    */
+    removeCard(cardObject) {
+        this.units = this.units.filter(unit => unit.id !== cardObject.id);
     }
 
     /** 
@@ -112,15 +148,15 @@ class Row {
     * without affecting the objects 'contract' with other parts of the program.  
     */
     calculateScore() {
-        this.computeScore();
-        this.setScore();
+        this._computeScore();
+        this._setScore();
     }
 
     /** 
     * Updates the currentScore property for each of the cards currently on this row, according to the
     * current state of the row. All logic involved in score modifiers etc is in this method.
     */
-    computeScore() {
+    _computeScore() {
         const regCards = this.units.filter(card => card instanceof UnitCard && !card.isHero);
         if (regCards.length === 0) return;
         // to begin with reset everything back to the base score
@@ -205,7 +241,7 @@ class Row {
     * Retrieves the currentScore value for each card on this row and sums them then sets this rows
     * score property to that value.
     */
-    setScore() {
+    _setScore() {
         const onlyUnitCards = this.units.filter(card => card instanceof UnitCard);
         const newScore = onlyUnitCards.reduce((acc, nextCard, index) => {
             return acc + nextCard.currentScore;

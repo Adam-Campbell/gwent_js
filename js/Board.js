@@ -1,13 +1,30 @@
+/*
+
+External interface:
+
+Properties:
+rows - an array of Row objects representing the rows of the board.
+
+Methods:
+getPlayersRows() - returns an array of all of the row objects owned by a specific player.
+renderPlayersRows() - calls the render() method on all rows owned by a specific player.
+renderSwapPlayersScreen() - renders the transition screen for between player turns.
+renderEndOfRoundScreen() - renders the transition screen for between game rounds. 
+renderBoardSkeleton() - renders the main markup for the board, but not the details such
+as cards on rows, scores etc.
+
+*/
+
 class Board {
     constructor(playerOne, playerTwo) {
-        this.rows = this.createRows(playerOne, playerTwo);
+        this.rows = this._createRows(playerOne, playerTwo);
     }
 
     /** 
     * Creates the rows on the board
     * @return  {array}   Array of Row objects
     */
-    createRows(playerOne, playerTwo) {
+    _createRows(playerOne, playerTwo) {
         return [
             new Row(playerOne, 'siege'),
             new Row(playerOne, 'ranged'),
@@ -37,29 +54,13 @@ class Board {
             row.render();
         }
     }
-    
-    renderModal(contentToRender, withButton=false) {
-        const docFrag = document.createDocumentFragment();
-        const modalOverlay = document.createElement('div');
-        const modalContentContainer = document.createElement('div');
-        modalOverlay.classList.add('modal__overlay');
-        modalContentContainer.classList.add('modal__content');
-        modalContentContainer.appendChild(contentToRender);
-        modalOverlay.appendChild(modalContentContainer);
-        if (withButton) {
-            const modalButton = document.createElement('button');
-            modalButton.classList.add('modal__button');
-            modalButton.textContent = 'X';
-            modalButton.addEventListener('click', function() {
-                document.body.removeChild(modalOverlay);
-            });
-            modalOverlay.appendChild(modalButton);
-        }
-        docFrag.appendChild(modalOverlay);
-        document.body.appendChild(docFrag);
-    }
 
-    renderSwapPlayersModal(callback) {
+    /**
+     * Renders the transition screen between each players turn
+     * @param {function} callback - the function to call once the next player clicks to 
+     * start their turn.
+     */
+    renderSwapPlayersScreen(callback) {
         const docFrag = document.createDocumentFragment();
         const modal = document.createElement('div');
         const text = document.createElement('p');
@@ -70,15 +71,7 @@ class Board {
         button.classList.add('swap-players-modal__button');
         button.textContent = 'Start Turn';
         button.addEventListener('click', () => {
-            // these would be good to extract into a callback function that can be 
-            // passed into this rendering function
-            // game.switchActivePlayer();
-            // game.activePlayer.renderHand();
-            // game.activePlayer.refreshInfoPanel();
-            // game.inactivePlayer.renderHand();
-            // game.inactivePlayer.refreshInfoPanel();
             callback();
-            // this stays here though
             document.body.removeChild(modal);
         });
         modal.appendChild(text);
@@ -90,7 +83,13 @@ class Board {
         }, 1000);
     }
 
-    renderEndOfRoundModal(winner, callback) {
+    /**
+     * Renders the transition screen between rounds.
+     * @param {string} winner - the name of the player that won.
+     * @param {function} callback - the function to be called once the next player clicks to being 
+     * their turn. 
+     */
+    renderEndOfRoundScreen(winner, callback) {
         const docFrag = document.createDocumentFragment();
         const modal = document.createElement('div');
         const text = document.createElement('p');
@@ -101,12 +100,7 @@ class Board {
         text.textContent = `${winner} won the round!`;
         button.textContent = 'Continue';
         button.addEventListener('click', () => {
-            // these would be good to extract into a callback function that can be 
-            // passed into this rendering function
-            // game.activePlayer.preRoundCleanUp();
-            // game.inactivePlayer.preRoundCleanUp();
             callback();
-            // this stays here though
             document.body.removeChild(modal);
         });
 
@@ -118,12 +112,16 @@ class Board {
         }, 1000);
     } 
 
+    /**
+     * Renders the 'skeleton' markup for the board, the layout for all of the individual
+     * rows to be rendered into. 
+     */
     renderBoardSkeleton() {
-        console.log('renderBoardSkeleton was called!!');
         const nodeToRenderTo = document.querySelector('.container');
         const boardHTML = createHTML({
             templateId: 'boardTemplate'
         });
         nodeToRenderTo.innerHTML = boardHTML;
     }
+    
 }

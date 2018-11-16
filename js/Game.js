@@ -1,7 +1,30 @@
+/*
+
+External interface:
+
+Properties:
+cardBank - a dictionary of every single card present in the game, with the cards unique id 
+used as a key.
+players - an array of Player objects representing the players of the game. 
+board - the Board object representing the game board. 
+activePlayer - the Player object for the currently active player.
+inactivePlayer - the Player object for the currently inactive player.
+
+Methods:
+getPlayerById() - returns the Player object with a specific id.
+playTurn() - contains all the logic to play the next turn of the game.
+init() - initializes the game. 
+
+
+Methods:
+
+
+*/
+
 class Game {
     constructor(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
         this.cardBank = {};
-        this.players = this.createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction);
+        this.players = this._createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction);
         this.board = new Board(this.players[0], this.players[1]);
     }
 
@@ -9,7 +32,7 @@ class Game {
     * Creates two Player objects
     * @return  {array}   Array containing the Player objects
     */
-    createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
+    _createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
         return [
             new Player(playerOneName, playerOneFaction, 0, true, this),
             new Player(playerTwoName, playerTwoFaction, 1, false, this)
@@ -20,7 +43,7 @@ class Game {
     * Switches the active player
     * No params or return value
     */
-    switchActivePlayer() {
+    _switchActivePlayer() {
         for (let player of this.players) {
             player.active = !player.active;
         }
@@ -42,6 +65,11 @@ class Game {
         return this.players.find(player => !player.active);
     }
 
+    /**
+     * Get the Player object with a specific id
+     * @param {number} id - the id for the player 
+     * @returns {Object} - the Player object with the specified id.
+     */
     getPlayerById(id) {
         return this.players.find(player => player.id === id);
     }
@@ -68,8 +96,8 @@ class Game {
         inactivePlayer.refreshInfoPanel();
 
         if (inactivePlayer.continueRound) {
-            this.board.renderSwapPlayersModal(() => {
-                this.switchActivePlayer();
+            this.board.renderSwapPlayersScreen(() => {
+                this._switchActivePlayer();
                 this.activePlayer.renderHand();
                 this.activePlayer.refreshInfoPanel();
                 this.inactivePlayer.renderHand();
@@ -86,7 +114,7 @@ class Game {
                 inactivePlayer.roundsWon += 1;
                 winner = inactivePlayer.name;
             }
-            this.board.renderEndOfRoundModal(winner, () => {
+            this.board.renderEndOfRoundScreen(winner, () => {
                 this.activePlayer.preRoundCleanUp();
                 this.inactivePlayer.preRoundCleanUp();
             });
@@ -105,20 +133,6 @@ class Game {
         }
         // const startScreenElement = document.querySelector('.player-select');
         // document.body.removeChild(startScreenElement);
-    }
-
-    /** 
-    * This is merely a convenience function used in development. Prints a string to the console
-    * showing each players current score and number of rounds won. 
-    */
-    logStats() {
-        const statsString = `
-            Player One current score: ${this.players[0].currentScore}
-            Player One rounds won: ${this.players[0].roundsWon}
-            Player Two current score: ${this.players[1].currentScore}
-            Player Two rounds won: ${this.players[1].roundsWon} 
-        `;
-        console.log(statsString);
     }
 
 }
