@@ -1,5 +1,6 @@
 class Game {
     constructor(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
+        this.cardBank = {};
         this.players = this.createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction);
         this.board = new Board(this.players[0], this.players[1]);
     }
@@ -10,8 +11,8 @@ class Game {
     */
     createPlayers(playerOneName, playerOneFaction, playerTwoName, playerTwoFaction) {
         return [
-            new Player(playerOneName, playerOneFaction, 0, true),
-            new Player(playerTwoName, playerTwoFaction, 1, false)
+            new Player(playerOneName, playerOneFaction, 0, true, this),
+            new Player(playerTwoName, playerTwoFaction, 1, false, this)
         ];
     }
 

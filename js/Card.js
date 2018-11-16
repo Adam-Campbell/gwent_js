@@ -1,11 +1,12 @@
 class Card {
-    constructor(name, id, image, ownerId) {
+    constructor(name, id, image, ownerId, gameRef) {
         this.name = name;
         this.id = id;
         this.image = image;
         // note - owners id used instead of the actual owner object in order to avoid 
         // circular reference. 
         this.ownerId = ownerId;
+        this.gameRef = gameRef
     }
 
     /** 
@@ -13,6 +14,8 @@ class Card {
     * @param   {boolean}    inPlay - true if card is on a row, false if in hand, graveyard etc.
     * @returns {HTMLElement} a document fragment containing the HTML representation of the card.
     */
+    // change this to use the options object pattern, as just seeing true or false 
+    // on its own doesn't make much sense
     render(inPlay=false) {
         const imageElement = document.createElement('img');
         const imageContainer = document.createElement('div');
@@ -24,7 +27,7 @@ class Card {
         imageContainer.addEventListener('click', (e) => {
             if (e.ctrlKey) {
                 this.renderModal();
-            } else if (!inPlay && game.activePlayer.id === this.ownerId) {
+            } else if (!inPlay && this.gameRef.activePlayer.id === this.ownerId) {
                 this.playCard();
             }
         });
@@ -49,13 +52,13 @@ class Card {
         jumboImage.classList.add('jumbo-card__image');
         jumboImage.src = `images/${this.image}`;
         imageContainer.appendChild(jumboImage);
-        game.board.renderModal(imageContainer, true);
+        this.gameRef.board.renderModal(imageContainer, true);
     }
 }
 
 class UnitCard extends Card {
-    constructor(name, id, image, ownerId, type, baseScore, isHero) {
-        super(name, id, image, ownerId);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero) {
+        super(name, id, image, ownerId, gameRef);
         this.baseScore = baseScore;
         this.type = type;
         this.isHero = isHero;
@@ -68,6 +71,7 @@ class UnitCard extends Card {
     * No return value
     */
     playCard() {
+        const game = this.gameRef;
         const activePlayer = game.activePlayer;
         // remove this card from the players hand
         activePlayer.removeFromHand(this);
@@ -116,8 +120,8 @@ class UnitCard extends Card {
 }
 
 class ScorchUnitCard extends UnitCard {
-    constructor(name, id, image, ownerId, type, baseScore, isHero) {
-        super(name, id, image, ownerId, type, baseScore, isHero);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero) {
+        super(name, id, image, ownerId, gameRef, type, baseScore, isHero);
         //this.ability = cardAbilities.scorchUnit;
     }
 
@@ -126,6 +130,7 @@ class ScorchUnitCard extends UnitCard {
     * No return value
     */
     playCard() {
+        const game = this.gameRef;
         const activePlayer = game.activePlayer;
         const inactivePlayer = game.inactivePlayer;
         // remove this card from the players hand
@@ -171,8 +176,8 @@ class ScorchUnitCard extends UnitCard {
 }
 
 class SummonUnitCard extends UnitCard {
-    constructor(name, id, image, ownerId, type, baseScore, isHero) {
-        super(name, id, image, ownerId, type, baseScore, isHero);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero) {
+        super(name, id, image, ownerId, gameRef, type, baseScore, isHero);
         //this.ability = cardAbilities.summon;
     }
 
@@ -181,6 +186,7 @@ class SummonUnitCard extends UnitCard {
     * No return value
     */
     playCard() {
+        const game = this.gameRef;
         const activePlayer = game.activePlayer;
         // remove this card from the players hand
         activePlayer.removeFromHand(this);
@@ -199,8 +205,8 @@ class SummonUnitCard extends UnitCard {
 }
 
 class SpyUnitCard extends UnitCard {
-    constructor(name, id, image, ownerId, type, baseScore, isHero) {
-        super(name, id, image, ownerId, type, baseScore, isHero);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero) {
+        super(name, id, image, ownerId, gameRef, type, baseScore, isHero);
         //this.ability = cardAbilities.spy;
     }
 
@@ -209,6 +215,7 @@ class SpyUnitCard extends UnitCard {
     * No return value
     */
     playCard() {
+        const game = this.gameRef;
         const activePlayer = game.activePlayer;
         const inactivePlayer = game.inactivePlayer;
         // remove this card from the players hand
@@ -226,8 +233,8 @@ class SpyUnitCard extends UnitCard {
 }
 
 class HealUnitCard extends UnitCard {
-    constructor(name, id, image, ownerId, type, baseScore, isHero) {
-        super(name, id, image, ownerId, type, baseScore, isHero);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero) {
+        super(name, id, image, ownerId, gameRef, type, baseScore, isHero);
         //this.ability = cardAbilities.heal;
     }
 
@@ -236,6 +243,7 @@ class HealUnitCard extends UnitCard {
     * No return value
     */
     playCard() {
+        const game = this.gameRef;
         const activePlayer = game.activePlayer;
         // remove this card from the players hand
         activePlayer.removeFromHand(this);
@@ -252,6 +260,7 @@ class HealUnitCard extends UnitCard {
     }
 
     _renderGraveyard(cardObjects) {
+        const game = this.gameRef;
         const docFrag = document.createDocumentFragment();
         for (let card of cardObjects) {
             const jumboImage = document.createElement('img');
@@ -275,34 +284,35 @@ class HealUnitCard extends UnitCard {
 }
 
 class TightBondUnitCard extends UnitCard {
-    constructor(name, id, image, ownerId, type, baseScore, isHero, bondGroup) {
-        super(name, id, image, ownerId, type, baseScore, isHero);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero, bondGroup) {
+        super(name, id, image, ownerId, gameRef, type, baseScore, isHero);
         //this.ability = cardAbilities.tightBond;
         this.bondGroup = bondGroup;
     }
 }
 
 class MoraleBoostUnitCard extends UnitCard {
-    constructor(name, id, image, ownerId, type, baseScore, isHero) {
-        super(name, id, image, ownerId, type, baseScore, isHero);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero) {
+        super(name, id, image, ownerId, gameRef, type, baseScore, isHero);
         //this.ability = cardAbilities.moraleBoost;
     }
 }
 
 class CommandersHornUnitCard extends UnitCard {
-    constructor(name, id, image, ownerId, type, baseScore, isHero) {
-        super(name, id, image, ownerId, type, baseScore, isHero);
+    constructor(name, id, image, ownerId, gameRef, type, baseScore, isHero) {
+        super(name, id, image, ownerId, gameRef, type, baseScore, isHero);
         //this.ability = cardAbilities.commandersHornUnit;
     }
 }
 
 class WeatherCard extends Card {
-    constructor(name, id, image, ownerId, type) {
-        super(name, id, image, ownerId);
+    constructor(name, id, image, ownerId, gameRef, type) {
+        super(name, id, image, ownerId, gameRef);
         this.type = type;
     }
 
     playCard() {
+        const game = this.gameRef;
         // remove the card from the players hand
         game.activePlayer.removeFromHand(this);
         // move it into the players graveyard
@@ -317,11 +327,12 @@ class WeatherCard extends Card {
 }
 
 class ClearWeatherCard extends Card {
-    constructor(name, id, image, ownerId) {
-        super(name, id, image, ownerId);
+    constructor(name, id, image, ownerId, gameRef) {
+        super(name, id, image, ownerId, gameRef);
     }
 
     playCard() {
+        const game = this.gameRef;
         // remove the card from the players hand
         game.activePlayer.removeFromHand(this);
         // move it into the players graveyard
@@ -336,8 +347,8 @@ class ClearWeatherCard extends Card {
 }
 
 class ScorchCard extends Card {
-    constructor(name, id, image, ownerId) {
-        super(name, id, image, ownerId);
+    constructor(name, id, image, ownerId, gameRef) {
+        super(name, id, image, ownerId, gameRef);
     }
 
     playCard() {
@@ -362,6 +373,7 @@ class ScorchCard extends Card {
         // We already have references to the cards on those rows that need to be scorched, so just 'scorch'
         // those cards by removing them from the row and moving them into their respective owners graveyards.
         //
+        const game = this.gameRef;
         const struct = {
             score: 0,
             rows: []
@@ -415,8 +427,8 @@ class ScorchCard extends Card {
 }
 
 class DecoyCard extends Card {
-    constructor(name, id, image, ownerId) {
-        super(name, id, image, ownerId);
+    constructor(name, id, image, ownerId, gameRef) {
+        super(name, id, image, ownerId, gameRef);
     }
 
     playCard() {
@@ -452,6 +464,7 @@ class DecoyCard extends Card {
         // method but in other situations as well.
         //
         //
+        const game = this.gameRef;
         const self = this;
         const thisId = this.id;
         function handleClick(e) {
@@ -497,8 +510,8 @@ class DecoyCard extends Card {
 }
 
 class CommandersHornCard extends Card {
-    constructor(name, id, image, ownerId) {
-        super(name, id, image, ownerId);
+    constructor(name, id, image, ownerId, gameRef) {
+        super(name, id, image, ownerId, gameRef);
     }
 
     playCard() {
@@ -520,6 +533,7 @@ class CommandersHornCard extends Card {
         //
         //
         const self = this;
+        const game = this.gameRef;
         function handleClick(e) {
             // check that either the target element, or a parent of the target element, is a row,
             // and store reference in rowNode if true

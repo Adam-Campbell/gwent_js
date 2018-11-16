@@ -70,11 +70,14 @@ class Board {
         button.classList.add('swap-players-modal__button');
         button.textContent = 'Start Turn';
         button.addEventListener('click', () => {
+            // these would be good to extract into a callback function that can be 
+            // passed into this rendering function
             game.switchActivePlayer();
             game.activePlayer.renderHand();
             game.activePlayer.renderInfoPanel();
             game.inactivePlayer.renderHand();
             game.inactivePlayer.renderInfoPanel();
+            // this stays here though
             document.body.removeChild(modal);
         });
         modal.appendChild(text);
@@ -97,8 +100,11 @@ class Board {
         text.textContent = `${winner} won the round!`;
         button.textContent = 'Continue';
         button.addEventListener('click', () => {
+            // these would be good to extract into a callback function that can be 
+            // passed into this rendering function
             game.activePlayer.preRoundCleanUp();
             game.inactivePlayer.preRoundCleanUp();
+            // this stays here though
             document.body.removeChild(modal);
         });
 

@@ -1,13 +1,18 @@
 class Player {
-    constructor(name, faction, id, active) {
+    constructor(name, faction, id, active, gameRef) {
         this.name = name;
+        this.faction = faction;
         this.id = id;
         this.currentScore = 0;
         this.roundsWon = 0;
         this.continueRound = true;
         this.deck = this.createDeck(
-            this._setDeckSource(faction)
+            this._setDeckSource(faction), 
+            gameRef
         );
+        for (let card of this.deck) {
+            gameRef.cardBank[card.id] = card;
+        }
         this.hand = this.createHand();
         this.graveyard = [];
         this.active = active;
@@ -43,7 +48,7 @@ class Player {
     * data to determine arguments to pass in.
     * @return  {array}   An array of Card objects
     */
-    createDeck(deckSource) {
+    createDeck(deckSource, gameRef) {
         const playerId = this.id;
         return deckSource.map(function(card, index) {
             let id = generateId(12); 
@@ -56,6 +61,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero
@@ -67,6 +73,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero
@@ -78,6 +85,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero
@@ -89,6 +97,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero
@@ -100,6 +109,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero
@@ -111,6 +121,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero,
@@ -123,6 +134,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero
@@ -134,6 +146,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type,
                         card.baseScore,
                         card.isHero
@@ -145,6 +158,7 @@ class Player {
                         id,
                         card.image,
                         playerId,
+                        gameRef,
                         card.type
                     );
 
@@ -153,7 +167,8 @@ class Player {
                         card.name,
                         id,
                         card.image,
-                        playerId
+                        playerId,
+                        gameRef
                     );
 
                 case cardTypes.scorchCard:
@@ -161,7 +176,8 @@ class Player {
                         card.name,
                         id,
                         card.image,
-                        playerId
+                        playerId,
+                        gameRef
                     );
 
                 case cardTypes.decoyCard:
@@ -169,7 +185,8 @@ class Player {
                         card.name,
                         id,
                         card.image,
-                        playerId
+                        playerId,
+                        gameRef
                     );
 
                 case cardTypes.commandersHornCard:
@@ -177,7 +194,8 @@ class Player {
                         card.name,
                         id,
                         card.image,
-                        playerId
+                        playerId,
+                        gameRef
                     );
 
                 default:
@@ -185,7 +203,8 @@ class Player {
                         card.name,
                         id,
                         card.image,
-                        playerId
+                        playerId,
+                        gameRef
                     );
             }
         });
@@ -222,7 +241,7 @@ class Player {
     /** 
     * Picks a random revivable card from the players graveyard and plays it onto the board. 
     */
-    playFromGraveyard() {
+    __noLongerUsed__playFromGraveyard() {
         // filter out hero cards which can't be revived
         const revivableCards = this.graveyard.filter(card => !card.isHero);
         // just play turn if no revivable cards
@@ -247,6 +266,7 @@ class Player {
     * No parameters or return value    
     */
     updatePlayerScore() {
+        // Is there a way to avoid referencing the game object here?
         const playersRows = game.board.getPlayersRows(this);
         for (let row of playersRows) {
             row.calculateScore();
@@ -289,7 +309,7 @@ class Player {
     /** 
     * Render the card dock containing the players current hand 
     */
-    _renderHand() {
+    _renderHandIfChanged() {
         const targetElement = document.querySelector(`.card-dock[data-player-id="${this.id}"]`);
         const frag = document.createDocumentFragment();
         const currentHand = this.hand;
@@ -308,7 +328,7 @@ class Player {
 
     renderHand() {
         if (this._determineIfStateChanged()) {
-            this._renderHand();
+            this._renderHandIfChanged();
         }
     }
 
@@ -323,7 +343,7 @@ class Player {
         const currentState = this._getCurrentState();
         const prevState = this._prevHandState;
         let hasChanged = false;
-        // if cards arrays haves different lengths or isActivePlayer is different the set 
+        // if cards arrays haves different lengths or isActivePlayer is different then set 
         // hasChanged to true
         if (
             prevState.cards.length !== currentState.cards.length ||
@@ -359,9 +379,12 @@ class Player {
     /** 
     * Render the info panel for this player
     */
-    renderInfoPanel() {
+    _renderInfoPanel() {
         // grab the info panel for this player
         const targetInfoPanel = document.querySelector(`.player-info[data-player-id="${this.id}"]`);
+        targetInfoPanel.querySelector('.player-info__name').textContent = this.name;
+        targetInfoPanel.querySelector('.player-info__faction').textContent = this.faction;
+        targetInfoPanel.querySelector('.player-info__image').src = `images/${this.image}`;
         // set rounds won to this.roundsWon
         targetInfoPanel.querySelector('.player-info__rounds-won').textContent = `${this.roundsWon} rounds won`;
         // set # cards in hand to this.hand.length
@@ -376,15 +399,13 @@ class Player {
             playingStatus.textContent = '';
         }
     }
+    renderInfoPanel() {
+        const nodeToRenderTo = document.querySelector(`.player-info[data-player-id="${this.id}"]`);
+        const infoPanelHTML = createHTML({
+            templateId: 'playerInfoPanelTemplate',
+            dataSource: this
+        });
+        nodeToRenderTo.innerHTML = infoPanelHTML;
+    }
 
 }
-
-
-
-function generateId(length) {
-    let str = '';
-    for (let i = 0; i < length; i++) {
-        str += Math.floor(Math.random() * 10).toString();
-    }
-    return str;
-} 

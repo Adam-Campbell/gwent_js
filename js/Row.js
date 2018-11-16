@@ -54,7 +54,7 @@ class Row {
 
     render() {
         if (this._determineIfStateChanged()) {
-            this._render();
+            this._renderIfChanged();
         }
     }
 
@@ -77,7 +77,7 @@ class Row {
     /** 
     * Render this particular row.
     */
-    _render() {
+    _renderIfChanged() {
         const targetRow = document.querySelector(`.row[data-player-id="${this.owner.id}"][data-unit-type="${this.type}"]`);
         const cardContainer = targetRow.querySelector('.row__inner');
         const rowScore = targetRow.querySelector('.row__score-text'); 
