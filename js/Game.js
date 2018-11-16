@@ -49,37 +49,6 @@ class Game {
     /** 
     * Contains all the logic for playing a turn
     */
-    _playTurn() {
-        const activePlayer = this.activePlayer;
-        const inactivePlayer = this.inactivePlayer;
-        // update the scores for each player
-        activePlayer.updatePlayerScore();
-        inactivePlayer.updatePlayerScore();
-        // deal with player switching / end of round work
-        if (inactivePlayer.continueRound) {
-            this.switchActivePlayer();
-        } else if (!activePlayer.continueRound) {
-            const activePlayerScore = activePlayer.currentScore;
-            const inactivePlayerScore = inactivePlayer.currentScore;
-            if (activePlayerScore > inactivePlayerScore) {
-                activePlayer.roundsWon += 1;
-            } else if (inactivePlayerScore > activePlayerScore) {
-                inactivePlayer.roundsWon += 1;
-            }
-            this.switchActivePlayer();
-            activePlayer.preRoundCleanUp();
-            inactivePlayer.preRoundCleanUp();
-        }
-        // rerender everything
-        //this.board.renderSwapPlayersModal();
-        activePlayer.renderHand();
-        this.board.renderPlayersRows(activePlayer);
-        activePlayer.renderInfoPanel();
-        inactivePlayer.renderHand();
-        this.board.renderPlayersRows(inactivePlayer);
-        inactivePlayer.renderInfoPanel();
-    }
-
     playTurn() {
         // grab references to the active and inactive players
         const activePlayer = this.activePlayer;
@@ -93,13 +62,19 @@ class Game {
         // any extraneous rerenders will be dealt with by the respective render functions.
         activePlayer.renderHand();
         this.board.renderPlayersRows(activePlayer);
-        activePlayer.renderInfoPanel();
+        activePlayer.refreshInfoPanel();
         inactivePlayer.renderHand();
         this.board.renderPlayersRows(inactivePlayer);
-        inactivePlayer.renderInfoPanel();
+        inactivePlayer.refreshInfoPanel();
 
         if (inactivePlayer.continueRound) {
-            this.board.renderSwapPlayersModal();
+            this.board.renderSwapPlayersModal(() => {
+                this.switchActivePlayer();
+                this.activePlayer.renderHand();
+                this.activePlayer.refreshInfoPanel();
+                this.inactivePlayer.renderHand();
+                this.inactivePlayer.refreshInfoPanel();
+            });
         } else if (!activePlayer.continueRound) {
             let winner = '';
             const activePlayerScore = activePlayer.currentScore;
@@ -111,7 +86,10 @@ class Game {
                 inactivePlayer.roundsWon += 1;
                 winner = inactivePlayer.name;
             }
-            this.board.renderEndOfRoundModal(winner);
+            this.board.renderEndOfRoundModal(winner, () => {
+                this.activePlayer.preRoundCleanUp();
+                this.inactivePlayer.preRoundCleanUp();
+            });
         }
 
     }
@@ -120,18 +98,13 @@ class Game {
     * Performs necessary work to initialise the game.
     */
     init() {
+        this.board.renderBoardSkeleton();
         for (let player of this.players) {
             player.renderHand();
             player.renderInfoPanel();
-            const playerInfoPanel = document.querySelector(`.player-info[data-player-id="${player.id}"]`);
-            playerInfoPanel.querySelector('.player-info__end-round')
-                           .addEventListener('click', () => {
-                               player.finishRound();
-                               game.playTurn();
-                           });
         }
-        const startScreenElement = document.querySelector('.player-select');
-        document.body.removeChild(startScreenElement);
+        // const startScreenElement = document.querySelector('.player-select');
+        // document.body.removeChild(startScreenElement);
     }
 
     /** 

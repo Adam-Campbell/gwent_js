@@ -314,7 +314,7 @@
     height: 100%;
     top: 0;
     left: 0;
-    background-color: crimson;
+    background-color: #111;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -322,26 +322,26 @@
 }
 
 .swap-players-modal__text {
-    color: white;
+    color: crimson;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 28px;
 }
 
 .swap-players-modal__button {
-    color: crimson;
+    color: papayawhip;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     border: none;
     border-radius: 3px;
-    background-color: white;
+    background-color: crimson;
     padding: 8px 16px;
     cursor: pointer;
     transition: background-color 0.25s ease-out;
 }
 
 .swap-players-modal__button:hover {
-    background-color: #ddd;
+    background-color: rgb(160, 13, 43);
 }
 
 .end-of-round-modal {

@@ -54,6 +54,7 @@ class Card {
         imageContainer.appendChild(jumboImage);
         this.gameRef.board.renderModal(imageContainer, true);
     }
+
 }
 
 class UnitCard extends Card {
@@ -224,6 +225,7 @@ class SpyUnitCard extends UnitCard {
         const inactivePlayersRows = game.board.getPlayersRows(inactivePlayer);
         const rowForCard = inactivePlayersRows.find(row => row.type === this.type);
         rowForCard.addUnit(this);
+        this.ownerId = inactivePlayer.id;
         // draw two cards from activePlayers deck and place into their hand
         activePlayer.drawFromDeck(2);
         // call the main game.playTurn method

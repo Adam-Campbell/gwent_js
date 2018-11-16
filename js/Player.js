@@ -303,7 +303,7 @@ class Player {
         }
         game.board.renderPlayersRows(this);
         this.renderHand();
-        this.renderInfoPanel();
+        this.refreshInfoPanel();
     }
 
     /** 
@@ -399,6 +399,10 @@ class Player {
             playingStatus.textContent = '';
         }
     }
+    /**
+     * Renders the initial info panel for this player. Only called at the start of the match, 
+     * subsequent rerenders to adjust things like score utilise the refreshInfoPanel method.
+     */
     renderInfoPanel() {
         const nodeToRenderTo = document.querySelector(`.player-info[data-player-id="${this.id}"]`);
         const infoPanelHTML = createHTML({
@@ -406,6 +410,32 @@ class Player {
             dataSource: this
         });
         nodeToRenderTo.innerHTML = infoPanelHTML;
+        nodeToRenderTo.querySelector('.player-info__end-round')
+                           .addEventListener('click', () => {
+                               this.finishRound();
+                               game.playTurn();
+                           });
+    }
+    /**
+     * Doesn't rerender the entire info panel, but hooks into the specific elements whose values
+     * change over time and updates their values in the DOM. 
+     */
+    refreshInfoPanel() {
+        // grab the info panel for this player
+        const targetInfoPanel = document.querySelector(`.player-info[data-player-id="${this.id}"]`);
+        // set rounds won to this.roundsWon
+        targetInfoPanel.querySelector('.player-info__rounds-won').textContent = `${this.roundsWon} rounds won`;
+        // set # cards in hand to this.hand.length
+        targetInfoPanel.querySelector('.player-info__hand').textContent = `${this.hand.length} cards in hand`;
+        // set current score to this.currentScore
+        targetInfoPanel.querySelector('.player-info__current-score').textContent = `Current Score: ${this.currentScore}`;
+        // adjust the now playing status
+        const playingStatus = targetInfoPanel.querySelector('.player-info__playing-status');
+        if (game.activePlayer.id === this.id) {
+            playingStatus.textContent = 'Now playing...';
+        } else {
+            playingStatus.textContent = '';
+        }
     }
 
 }

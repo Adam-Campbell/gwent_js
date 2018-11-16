@@ -22,13 +22,11 @@ function generateId(length) {
  */
 function createHTML(optionsObject) {
     const { templateId, dataSource } = optionsObject;
-    if (!templateId || !dataSource) {
-        throw new Error('You must provide a templateId and dataSource to the createHTML function.');
+    if (!templateId) {
+        throw new Error('You must provide a templateId to the createHTML function.');
     }
 	const source = document.getElementById(templateId).innerHTML;
 	const template = Handlebars.compile(source);
     const HTML = template(dataSource);
     return HTML;
-    //document.querySelector('.heading').innerHTML = headingHTML;
-    //destinationNode.innerHTML = HTML;
 }

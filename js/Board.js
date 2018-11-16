@@ -59,7 +59,7 @@ class Board {
         document.body.appendChild(docFrag);
     }
 
-    renderSwapPlayersModal() {
+    renderSwapPlayersModal(callback) {
         const docFrag = document.createDocumentFragment();
         const modal = document.createElement('div');
         const text = document.createElement('p');
@@ -72,11 +72,12 @@ class Board {
         button.addEventListener('click', () => {
             // these would be good to extract into a callback function that can be 
             // passed into this rendering function
-            game.switchActivePlayer();
-            game.activePlayer.renderHand();
-            game.activePlayer.renderInfoPanel();
-            game.inactivePlayer.renderHand();
-            game.inactivePlayer.renderInfoPanel();
+            // game.switchActivePlayer();
+            // game.activePlayer.renderHand();
+            // game.activePlayer.refreshInfoPanel();
+            // game.inactivePlayer.renderHand();
+            // game.inactivePlayer.refreshInfoPanel();
+            callback();
             // this stays here though
             document.body.removeChild(modal);
         });
@@ -89,7 +90,7 @@ class Board {
         }, 1000);
     }
 
-    renderEndOfRoundModal(winner) {
+    renderEndOfRoundModal(winner, callback) {
         const docFrag = document.createDocumentFragment();
         const modal = document.createElement('div');
         const text = document.createElement('p');
@@ -102,8 +103,9 @@ class Board {
         button.addEventListener('click', () => {
             // these would be good to extract into a callback function that can be 
             // passed into this rendering function
-            game.activePlayer.preRoundCleanUp();
-            game.inactivePlayer.preRoundCleanUp();
+            // game.activePlayer.preRoundCleanUp();
+            // game.inactivePlayer.preRoundCleanUp();
+            callback();
             // this stays here though
             document.body.removeChild(modal);
         });
@@ -116,4 +118,12 @@ class Board {
         }, 1000);
     } 
 
+    renderBoardSkeleton() {
+        console.log('renderBoardSkeleton was called!!');
+        const nodeToRenderTo = document.querySelector('.container');
+        const boardHTML = createHTML({
+            templateId: 'boardTemplate'
+        });
+        nodeToRenderTo.innerHTML = boardHTML;
+    }
 }
